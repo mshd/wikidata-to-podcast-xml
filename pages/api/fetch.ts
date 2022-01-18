@@ -17,7 +17,12 @@ export default async function handler(
   const { id } = req.query;
   // const JordanPeterson = "Q109238858";
   const podcastId = id as string;
-  const feed = await createXML(podcastId);
+  let limit = 0;
+  if (req.query.limit) {
+    limit = parseInt(req.query.limit as string);
+  }
+
+  const feed = await createXML(podcastId, limit);
   console.log(__dirname);
   // fs.writeFileSync(
   //   __dirname + "/../../../../public/feeds/" + podcastId + ".xml",

@@ -4,7 +4,10 @@ import axios from "axios";
 import wdk from "wikidata-sdk";
 const EXPLICIT_EPISODE = "Q109501804";
 
-export async function createXML(podcastId: string): Promise<string> {
+export async function createXML(
+  podcastId: string,
+  limit: number
+): Promise<string> {
   const podcast = await wikidataGetEntities([podcastId]);
   const claims = podcast.claims;
   let descr = "";
@@ -46,7 +49,7 @@ export async function createXML(podcastId: string): Promise<string> {
     itunesImage: "http://example.com/image.png",
   });
 
-  const episodes = await getEpisodesById(podcastId);
+  const episodes = await getEpisodesById(podcastId, limit);
   // console.log(episodes);
   for (const episode of episodes) {
     /* loop over data and add to feed */
@@ -72,7 +75,7 @@ export async function createXML(podcastId: string): Promise<string> {
   return xml;
 }
 
-export async function getEpisodesById(podcast: string) {
+export async function getEpisodesById(podcast: string, limit: number) {
   let data = `
 SELECT ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber
 WHERE 
@@ -91,8 +94,10 @@ WHERE
              ?seriesStatement pq:P1545 ?seasonNumber.
              }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-}
-LIMIT 10`;
+}`;
+  if (limit > 0) {
+    data += `\nLIMIT ${limit}`;
+  }
   const ids = await sparql(data);
   return ids;
 }
