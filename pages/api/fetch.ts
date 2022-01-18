@@ -14,17 +14,17 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { start } = req.query;
-  const JordanPeterson = "Q109238858";
-  const podcastId = JordanPeterson;
+  const { id } = req.query;
+  // const JordanPeterson = "Q109238858";
+  const podcastId = id as string;
   const feed = await createXML(podcastId);
   console.log(__dirname);
-  fs.writeFileSync(
-    __dirname + "/../../../../public/feeds/" + podcastId + ".xml",
-    feed
-  );
+  // fs.writeFileSync(
+  //   __dirname + "/../../../../public/feeds/" + podcastId + ".xml",
+  //   feed
+  // );
   res.statusCode = 200;
-  res.json({ name: "Jordan Peterson", fetched: true });
+  // res.json({ name: "Jordan Peterson", fetched: true });
   // res.setHeader("Content-Type", "application/xml");
-  // res.end(feed);
+  res.end(feed);
 }
