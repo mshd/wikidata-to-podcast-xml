@@ -1,5 +1,6 @@
 import { Podcast } from "podcast";
 import axios from "axios";
+import fs from "fs";
 //@ts-ignore
 import wdk from "wikidata-sdk";
 const EXPLICIT_EPISODE = "Q109501804";
@@ -54,9 +55,16 @@ export async function createXML(
   for (const episode of episodes) {
     /* loop over data and add to feed */
     episode.wikidataUrl = `https://www.wikidata.org/wiki/${episode.item.value}`;
+    let desc = `This is an episode. <br /><a href="${episode.wikidataUrl}">Item on Wikidata</a>`;
+    if (episode.guests) {
+      desc += `<br />Guests: ${episode.guests}`;
+    }
+    if (episode.recordedAtLabel) {
+      desc += `<br />Recorded at: ${episode.recordedAtLabel}`;
+    }
     feed.addItem({
       title: episode.title,
-      description: `This description does not exist. It can include html.<br /><a href="${episode.wikidataUrl}">Item on Wikidata</a>`,
+      description: desc,
       // url: "http://example.com/article4?this&that", // link to the item
       // guid: "1123", // optional - defaults to url
       // categories: ["Category 1", "Category 2", "Category 3", "Category 4"], // optional - array of item categories
@@ -76,29 +84,54 @@ export async function createXML(
 }
 
 export async function getEpisodesById(podcast: string, limit: number) {
-  let data = `
-SELECT ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber
+  //   let data = `
+  // SELECT ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber ?guestLabel
+  // WHERE
+  // {
+  //   ?item wdt:P31 wd:Q61855877.
+  //   ?item wdt:P179 wd:${podcast}.
+  //   ?item wdt:P1476 ?title .
+  //   OPTIONAL {?item wdt:P953 ?url .}
+  //   OPTIONAL { ?item wdt:P577 ?publicationDate . }
+  //   OPTIONAL { ?item wdt:P2047 ?duration . }
+  //   OPTIONAL { ?item wdt:P1552 ?hasQuality . }
+  //   OPTIONAL { ?item p:P4908 ?seasonStatement .
+  //              ?seasonStatement ps:P4908 ?season.
+  //              ?seasonStatement pq:P1545 ?episodeNumber.
+  //              ?season p:P179 ?seriesStatement .
+  //              ?seriesStatement pq:P1545 ?seasonNumber.
+  //              }
+  //                OPTIONAL { ?item wdt:P5030 ?guest }
+
+  //   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
+  // }`;
+  let data = `#podcast
+SELECT ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber ?recordedAtLabel (GROUP_CONCAT(DISTINCT ?guestLabel;separator=", ") AS ?guests) 
 WHERE 
 {
   ?item wdt:P31 wd:Q61855877.
   ?item wdt:P179 wd:${podcast}.
   ?item wdt:P1476 ?title .
-  OPTIONAL {?item wdt:P953 ?url .}
+  ?item wdt:P953 ?url .
   OPTIONAL { ?item wdt:P577 ?publicationDate . }
   OPTIONAL { ?item wdt:P2047 ?duration . }
   OPTIONAL { ?item wdt:P1552 ?hasQuality . }
+  OPTIONAL { ?item wdt:P483 ?recordedAt . }
   OPTIONAL { ?item p:P4908 ?seasonStatement . 
              ?seasonStatement ps:P4908 ?season.
              ?seasonStatement pq:P1545 ?episodeNumber.
              ?season p:P179 ?seriesStatement . 
              ?seriesStatement pq:P1545 ?seasonNumber.
              }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
-}`;
+  OPTIONAL { ?item wdt:P5030 ?guest }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?guest rdfs:label ?guestLabel . ?recordedAt rdfs:label ?recordedAtLabel .}
+}
+GROUP BY ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber ?recordedAtLabel`;
   if (limit > 0) {
     data += `\nLIMIT ${limit}`;
   }
   const ids = await sparql(data);
+  // fs.writeFileSync("ids.json", JSON.stringify(ids));
   return ids;
 }
 async function sparql(query: string) {
