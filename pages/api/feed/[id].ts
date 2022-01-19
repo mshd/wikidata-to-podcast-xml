@@ -8,10 +8,15 @@ export default async function handler(
   res: NextApiResponse
 ) {
   const { id } = req.query;
-  const feed = fs.readFileSync(
-    path.resolve(__dirname, "../../../../../public/feeds/" + id + ".xml")
-  );
-  res.statusCode = 200;
-  res.setHeader("Content-Type", "application/xml");
-  res.end(feed);
+  try {
+    const feed = fs.readFileSync(
+      path.resolve(__dirname, "../../../../../public/feeds/" + id + ".xml")
+    );
+    res.statusCode = 200;
+    res.setHeader("Content-Type", "application/xml");
+    res.end(feed);
+  } catch (er) {
+    res.statusCode = 404;
+    res.end("404 Not Found");
+  }
 }

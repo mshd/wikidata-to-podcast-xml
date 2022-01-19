@@ -16,7 +16,8 @@ export async function createXML(
   const claims = podcast.claims;
   let descr = "";
   if (claims.P5842) {
-    descr += `<br />External links: <a href="https://podcasts.apple.com/podcast/id${claims.P5842[0].value}">Apple Podcasts</a>`;
+    descr += `<br />External links: https://podcasts.apple.com/podcast/id${claims.P5842[0].value}`;
+    //<a href="https://podcasts.apple.com/podcast/id${claims.P5842[0].value}">Apple Podcasts</a>
   }
   if (!claims.P31) {
     return null;
@@ -27,15 +28,18 @@ export async function createXML(
   const podcastInfo = await getPodcastInfo(podcastId);
   console.log(podcastInfo);
   const episodes = await getEpisodesById(podcastId, limit);
-  descr += `<br /><a href="${episodes.link}" target="_blank">Episode query link</a>`;
+  descr += `<br /><a href="${episodes.link}" target="_blank">This podcast might be out of date. Contact us to have it updated.</a>`;
+  // if (podcastInfo.topics) {
+  //   descr += `<br />Topics: ${podcastInfo.topics}`;
+  // }
   const imageUrl =
     "https://upload.wikimedia.org/wikipedia/commons/2/27/Square%2C_Inc_-_Square_Logo.jpg";
   const feed = new Podcast({
     title: podcast.labels.en,
     description:
-      `This podcast was generated using Wikidata<br>Language: ${claims.P407?.[0].value}` +
+      `This podcast was generated using Wikidata.<br>Language: ${podcastInfo[0].language?.label}` +
       descr,
-    feedUrl: "http://example.com/rss.xml",
+    feedUrl: "https://podcast.nothispute.com/api/feed/" + podcastId + "",
     siteUrl: claims.P856?.[0].value,
     imageUrl: imageUrl,
     // docs: "http://example.com/rss/docs.html",
@@ -43,7 +47,7 @@ export async function createXML(
     // managingEditor: "Dylan Greene",
     // webMaster: "Dylan Greene",
     // copyright: "2013 Dylan Greene",
-    language: podcastInfo[0].languageCode || "en",
+    language: podcastInfo[0].language?.code || "en",
     // categories: ["Category 1", "Category 2", "Category 3"],
     pubDate: claims.P580?.[0].value,
     ttl: 60,
@@ -72,7 +76,7 @@ export async function createXML(
   for (const episode of episodes.data) {
     /* loop over data and add to feed */
     episode.wikidataUrl = `https://www.wikidata.org/wiki/${episode.item.value}`;
-    let desc = `This is an episode. <br /><a href="${episode.wikidataUrl}">Item on Wikidata</a>`;
+    let desc = `This is an episode. <br />Item on Wikidata: ${episode.wikidataUrl}`;
     if (episode.guests) {
       desc += `<br />Guests: ${episode.guests}`;
     }
@@ -81,6 +85,11 @@ export async function createXML(
     }
     if (episode.recordedAtLabel) {
       desc += `<br />Recorded at: ${episode.recordedAtLabel}`;
+    }
+    console.log(episode.recordingDate);
+    if (episode.recordingDate) {
+      let formattedDate = episode.recordingDate.substring(0, 10);
+      desc += `<br />Recorded: ${formattedDate}`;
     }
     feed.addItem({
       title: episode.title,

@@ -2,7 +2,7 @@
   "name": "wikidata-to-podcast-xml",
   "private": true,
   "scripts": {
-    "dev": "next dev",
+    "dev": "next dev -p 8099",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"

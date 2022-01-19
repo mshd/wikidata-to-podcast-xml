@@ -8,6 +8,11 @@ First, run the development server:
 npm run dev
 # or
 yarn dev
+pm2 start rethinkdb --interpreter none -- --port 8082
+
+pm2 start yarn --name "podcast" --interpreter bash -- start --port 8099
+pm2 start yarn --name podcast -- start --port 8099
+
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.

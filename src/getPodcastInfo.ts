@@ -1,7 +1,7 @@
 import { sparql } from "./getWikidataSparql";
 
 export async function getPodcastInfo(podcast: string) {
-  let data = `SELECT ?item ?itemLabel ?language ?languageCode ?genre ?genreLabel ?producer ?producerLabel  ?presenter ?presenterLabel ?itunesGenre ?itunesGenreId
+  let data = `SELECT ?item ?itemLabel ?language ?languageLabel ?languageCode ?genre ?genreLabel ?producer ?producerLabel  ?presenter ?presenterLabel ?itunesGenre ?itunesGenreId
 WHERE 
 {
   VALUES ?item {wd:${podcast}}
