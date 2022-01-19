@@ -6,7 +6,8 @@ import fs from "fs";
 import { fstat } from "fs";
 
 type Data = {
-  name: string;
+  error?: string;
+  name?: string;
   fetched: boolean;
 };
 
@@ -23,6 +24,10 @@ export default async function handler(
   }
 
   const feed = await createXML(podcastId, limit);
+  if (!feed) {
+    res.statusCode = 404;
+    res.json({ error: "Not valid Podcast (P31 must be set)", fetched: false });
+  }
   console.log(__dirname);
   // fs.writeFileSync(
   //   __dirname + "/../../../../public/feeds/" + podcastId + ".xml",

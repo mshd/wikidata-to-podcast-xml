@@ -1,6 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import fs from "fs";
+import path from "path";
 
 export default async function handler(
   req: NextApiRequest,
@@ -8,10 +9,9 @@ export default async function handler(
 ) {
   const { id } = req.query;
   const feed = fs.readFileSync(
-    __dirname + "/../../../../../public/feeds/" + id + ".xml"
+    path.resolve(__dirname, "../../../../../public/feeds/" + id + ".xml")
   );
   res.statusCode = 200;
-  // res.json({ name: "Jordan Peterson", fetched: true });
-  // res.setHeader("Content-Type", "application/xml");
+  res.setHeader("Content-Type", "application/xml");
   res.end(feed);
 }
