@@ -92,7 +92,7 @@ export async function createXML(
       desc += `<br />Recorded: ${formattedDate}`;
     }
     feed.addItem({
-      title: episode.title,
+      title: episode.title || episode.item.label, //use label as fallback
       description: desc,
       // url: "http://example.com/article4?this&that", // link to the item
       guid: episode.item.value, // use Wikidata ID, optional - defaults to url

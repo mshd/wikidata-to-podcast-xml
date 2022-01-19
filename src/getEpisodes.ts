@@ -10,7 +10,7 @@ WHERE
 {
   ?item wdt:P31 wd:Q61855877.
   ?item wdt:P179 wd:${podcast}.
-  ?item wdt:P1476 ?title .
+  OPTIONAL { ?item wdt:P1476 ?title .}
   #?item wdt:P953 ?url .
   ?item p:P953 ?urlStatement .
   ?urlStatement ps:P953 ?url .
@@ -29,7 +29,7 @@ WHERE
              ?seriesStatement pq:P1545 ?seasonNumber.
             }
   OPTIONAL { ?item wdt:P5030 ?guest }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?guest rdfs:label ?guestLabel . ?recordedAt rdfs:label ?recordedAtLabel .?mainSubject rdfs:label ?mainSubjectLabel .}
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel . ?guest rdfs:label ?guestLabel . ?recordedAt rdfs:label ?recordedAtLabel .?mainSubject rdfs:label ?mainSubjectLabel .}
 }
 GROUP BY ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber ?recordedAtLabel ?recordingDate ?productionCode
 ORDER BY ${ORDER_BY}(?publicationDate)
