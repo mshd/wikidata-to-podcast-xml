@@ -1,3 +1,4 @@
+import { DESCRIPTIONS } from "./podcastDescriptions";
 import { Podcast } from "podcast";
 import { getEpisodesById } from "./getEpisodes";
 import { getPodcastInfo } from "./getPodcastInfo";
@@ -28,17 +29,21 @@ export async function createXML(
   const podcastInfo = await getPodcastInfo(podcastId);
   console.log(podcastInfo);
   const episodes = await getEpisodesById(podcastId, limit);
-  descr += `<br /><a href="${episodes.link}" target="_blank">This podcast might be out of date. Contact us to have it updated.</a>`;
+  descr += `<br />This podcast might be out of date. Contact us to have it updated.<a href="${episodes.link}" target="_blank"></a>`;
   // if (podcastInfo.topics) {
   //   descr += `<br />Topics: ${podcastInfo.topics}`;
   // }
   const imageUrl =
     "https://upload.wikimedia.org/wikipedia/commons/2/27/Square%2C_Inc_-_Square_Logo.jpg";
+  let podcastArray = DESCRIPTIONS.find((d: any) => d.id === podcastId);
+  if (podcastArray) {
+    descr = `${podcastArray.description}<br />${descr}`;
+  }
   const feed = new Podcast({
     title: podcast.labels.en,
     description:
-      `This podcast was generated using Wikidata.<br>Language: ${podcastInfo[0].language?.label}` +
-      descr,
+      descr +
+      `<br /><br />This podcast is auto-generated.<br>Language: ${podcastInfo[0].language?.label}`,
     feedUrl: "https://podcast.nothispute.com/api/feed/" + podcastId + "",
     siteUrl: claims.P856?.[0].value,
     imageUrl: imageUrl,
@@ -76,7 +81,8 @@ export async function createXML(
   for (const episode of episodes.data) {
     /* loop over data and add to feed */
     episode.wikidataUrl = `https://www.wikidata.org/wiki/${episode.item.value}`;
-    let desc = `This is an episode. <br />Item on Wikidata: ${episode.wikidataUrl}`;
+    let desc = ``;
+    // let desc = `This is an episode. <br />Item on Wikidata: ${episode.wikidataUrl}`;
     if (episode.guests) {
       desc += `<br />Guests: ${episode.guests}`;
     }
