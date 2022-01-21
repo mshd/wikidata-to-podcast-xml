@@ -14,4 +14,10 @@ export const DESCRIPTIONS = [
     title: "The Joe Rogan Experience",
     description: `The Joe Rogan Experience is a podcast about the life of comedian Joe Rogan and the people he interviews, this feed contains old episodes from 2009 until 2019.`,
   },
+  {
+    id: "Q109238858",
+    img: "https://podcast.nothispute.com/images/jordan_peterson.jpg",
+    title: "The Jordan B. Peterson Podcast",
+    description: `Join intellectual phenomenon Dr. Jordan Peterson and his daughter Mikhaila for enlightening discourse that will change the way you think. This podcast breaks down the dichotomy of life through interviews and lectures that explain how individuals and culture are shaped by values, music, religion, and beyond. It will give you a new perspective and a modern understanding of your creativity, competence, and personality.`,
+  },
 ];
