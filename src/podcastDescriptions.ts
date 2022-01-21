@@ -1,7 +1,7 @@
 export const DESCRIPTIONS = [
   {
     id: "Q66141312",
-    img: "https://podcast.nothispute.com/images/ben_shapiro.jpeg",
+    img: "https://podcast.nothispute.com/images/ben_shapiro3000.jpg",
     title: "The Ben Shapiro Show",
     description: `Daily political podcast and live radio show produced by The Daily Wire and hosted by Ben Shapiro
     
