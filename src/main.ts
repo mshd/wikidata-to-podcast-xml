@@ -33,11 +33,12 @@ export async function createXML(
   // if (podcastInfo.topics) {
   //   descr += `<br />Topics: ${podcastInfo.topics}`;
   // }
-  const imageUrl =
+  let imageUrl =
     "https://upload.wikimedia.org/wikipedia/commons/2/27/Square%2C_Inc_-_Square_Logo.jpg";
   let podcastArray = DESCRIPTIONS.find((d: any) => d.id === podcastId);
   if (podcastArray) {
     descr = `${podcastArray.description}<br />${descr}`;
+    imageUrl = podcastArray.img;
   }
   const feed = new Podcast({
     title: podcast.labels.en,

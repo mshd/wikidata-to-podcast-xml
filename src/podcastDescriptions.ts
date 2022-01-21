@@ -1,6 +1,7 @@
 export const DESCRIPTIONS = [
   {
     id: "Q66141312",
+    img: "https://podcast.nothispute.com/images/ben_shapiro.jpeg",
     title: "The Ben Shapiro Show",
     description: `Daily political podcast and live radio show produced by The Daily Wire and hosted by Ben Shapiro
     
@@ -9,6 +10,7 @@ export const DESCRIPTIONS = [
   },
   {
     id: "Q30323986",
+    img: "https://podcast.nothispute.com/images/jre1500.jpg",
     title: "The Joe Rogan Experience",
     description: `The Joe Rogan Experience is a podcast about the life of comedian Joe Rogan and the people he interviews, this feed contains old episodes from 2009 until 2019.`,
   },
