@@ -98,6 +98,10 @@ export async function createXML(
       let formattedDate = episode.recordingDate.substring(0, 10);
       desc += `<br />Recorded: ${formattedDate}`;
     }
+    const url = new URLSearchParams({
+      url: episode.url,
+      id: podcastId,
+    }).toString();
     feed.addItem({
       title: episode.title || episode.item.label, //use label as fallback
       description: desc,
@@ -106,7 +110,7 @@ export async function createXML(
       // categories: ["Category 1", "Category 2", "Category 3", "Category 4"], // optional - array of item categories
       // author: "Guest Author", // optional - defaults to feed author property
       date: episode.publicationDate, // any format that js Date can parse.
-      enclosure: { url: episode.url }, // optional enclosure
+      enclosure: { url: "https://podcast.nothispute.com/api/redirect?" + url }, // optional enclosure
       itunesDuration: episode.duration,
       itunesExplicit: episode.hasQuality?.value == EXPLICIT_EPISODE,
       itunesEpisode: episode.episodeNumber
