@@ -12,7 +12,7 @@ export const DESCRIPTIONS = [
     id: "Q30323986",
     img: "https://podcast.nothispute.com/images/jre1500.jpg",
     title: "The Joe Rogan Experience",
-    description: `The Joe Rogan Experience is a podcast about the life of comedian Joe Rogan and the people he interviews, this feed contains old episodes from 2009 until 2019.`,
+    description: `*Please be patient, episodes might take up to a minute to load* <br /><br />The Joe Rogan Experience is a podcast about the life of comedian Joe Rogan and the people he interviews, this feed contains old episodes from 2009 until 2019. `,
   },
   {
     id: "Q109238858",

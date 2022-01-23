@@ -1,3 +1,7 @@
+import getWikipediaArticle, {
+  wikipediaDescription,
+} from "./getWikipediaArticle";
+
 import { DESCRIPTIONS } from "./podcastDescriptions";
 import { Podcast } from "podcast";
 import { getEpisodesById } from "./getEpisodes";
@@ -97,6 +101,10 @@ export async function createXML(
     if (episode.recordingDate) {
       let formattedDate = episode.recordingDate.substring(0, 10);
       desc += `<br />Recorded: ${formattedDate}`;
+    }
+    if (episode.wikipedia) {
+      let wikipediaGuests = episode.wikipedia.split("|");
+      desc += `<br />` + (await wikipediaDescription(wikipediaGuests));
     }
     const url = new URLSearchParams({
       url: episode.url,

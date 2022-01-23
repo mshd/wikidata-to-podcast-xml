@@ -5,7 +5,11 @@ import wdk from "wikidata-sdk";
 export async function getEpisodesById(podcast: string, limit: number) {
   const ORDER_BY = "DESC";
   let query = `#podcast
-SELECT ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber ?recordedAtLabel ?recordingDate ?productionCode (GROUP_CONCAT(DISTINCT ?guestLabel;separator=", ") AS ?guests) (GROUP_CONCAT(DISTINCT ?mainSubjectLabel;separator=", ") AS ?topics) 
+SELECT ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber 
+?recordedAtLabel ?recordingDate ?productionCode 
+(GROUP_CONCAT(DISTINCT ?guestLabel;separator=", ") AS ?guests) 
+(GROUP_CONCAT(DISTINCT ?mainSubjectLabel;separator=", ") AS ?topics) 
+(GROUP_CONCAT(DISTINCT ?article;separator="|") AS ?wikipedia) 
 WHERE 
 {
   ?item wdt:P31 wd:Q61855877.
@@ -28,7 +32,12 @@ WHERE
              ?season p:P179 ?seriesStatement . 
              ?seriesStatement pq:P1545 ?seasonNumber.
             }
-  OPTIONAL { ?item wdt:P5030 ?guest }
+  OPTIONAL { ?item wdt:P5030 ?guest.  
+    OPTIONAL {    
+      ?article schema:about ?guest .
+      ?article schema:isPartOf <https://en.wikipedia.org/>.
+    } 
+  }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel . ?guest rdfs:label ?guestLabel . ?recordedAt rdfs:label ?recordedAtLabel .?mainSubject rdfs:label ?mainSubjectLabel .}
 }
 GROUP BY ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber ?recordedAtLabel ?recordingDate ?productionCode
