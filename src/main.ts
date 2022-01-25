@@ -1,12 +1,9 @@
-import getWikipediaArticle, {
-  wikipediaDescription,
-} from "./getWikipediaArticle";
-
 import { DESCRIPTIONS } from "./podcastDescriptions";
 import { Podcast } from "podcast";
 import { getEpisodesById } from "./getEpisodes";
 import { getPodcastInfo } from "./getPodcastInfo";
 import { wikidataGetEntities } from "./getWikidataEntities";
+import { wikipediaDescription } from "./getWikipediaArticle";
 
 const EXPLICIT_EPISODE = "Q109501804";
 const PODCAST = "Q24634210";
