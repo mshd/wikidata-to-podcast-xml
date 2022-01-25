@@ -37,3 +37,4 @@ yarn-error.log*
 *.tsbuildinfo
 
 /public/feeds/*
+/public/imaes/archive/*
