@@ -1,0 +1,21 @@
+export const WD_EXPLICIT_EPISODE = "Q109501804";
+export const WD_PODCAST = "Q24634210";
+export const WD_PODCAST_EPISODE = "Q61855877";
+export const WD_PODCAST_IMAGE_URL = "P10286";
+export const WD_FEED_URL = "P1019";
+export const WD_INSTANCE_OF = "P31";
+export const WD_TITLE = "P1476";
+export const WD_SERIES = "P179";
+export const WD_LANGUAGE = "P407";
+export const WD_PUBLICATION_DATE = "P577";
+export const WD_GUEST = "P5030";
+export const WD_DISTRUBUTION_FORMAT = "P437";
+export const WD_PRODUCTION_CODE = "P2364";
+export const WD_DURATION = "P2047";
+export const WD_SECOND = "Q11574";
+export const WD_FULL_WORK_URL = "P953";
+export const WD_CONTENT_DELIVERER = "P3274";
+export const WD_FILE_FORMAT = "P2701";
+
+// export const WD_PRODUCTION_CODE = "P2364";
+// export const WD_PRODUCTION_CODE = "P2364";

@@ -1,3 +1,4 @@
+import { WD_PODCAST_IMAGE_URL } from "./wikidata";
 import { sparql } from "./getWikidataSparql";
 //@ts-ignore
 import wdk from "wikidata-sdk";
@@ -6,7 +7,7 @@ export async function getEpisodesById(podcast: string, limit: number) {
   const ORDER_BY = "DESC";
   let query = `#podcast
 SELECT ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber 
-?recordedAtLabel ?recordingDate ?productionCode 
+?recordedAtLabel ?recordingDate ?productionCode ?image 
 (GROUP_CONCAT(DISTINCT ?guestLabel;separator=", ") AS ?guests) 
 (GROUP_CONCAT(DISTINCT ?mainSubjectLabel;separator=", ") AS ?topics) 
 (GROUP_CONCAT(DISTINCT ?article;separator="|") AS ?wikipedia) 
@@ -26,6 +27,7 @@ WHERE
   OPTIONAL { ?item wdt:P10135 ?recordingDate . }
   OPTIONAL { ?item wdt:P2364 ?productionCode . }
   OPTIONAL { ?item wdt:P921 ?mainSubject . }
+  OPTIONAL { ?item wdt:${WD_PODCAST_IMAGE_URL} ?image . }
   OPTIONAL { ?item p:P4908 ?seasonStatement . 
              ?seasonStatement ps:P4908 ?season.
              ?seasonStatement pq:P1545 ?episodeNumber.
@@ -40,7 +42,7 @@ WHERE
   }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel . ?guest rdfs:label ?guestLabel . ?recordedAt rdfs:label ?recordedAtLabel .?mainSubject rdfs:label ?mainSubjectLabel .}
 }
-GROUP BY ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber ?recordedAtLabel ?recordingDate ?productionCode
+GROUP BY ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seasonNumber ?episodeNumber ?recordedAtLabel ?recordingDate ?productionCode ?image
 ORDER BY ${ORDER_BY}(?publicationDate)
 `;
   // { ?urlStatement pq:P2701 wd:Q42591 . } UNION { FILTER regex(STR(?url), ".mp3$", "i") }

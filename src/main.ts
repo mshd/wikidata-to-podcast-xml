@@ -1,12 +1,11 @@
 import { DESCRIPTIONS } from "./podcastDescriptions";
 import { Podcast } from "podcast";
+import { WD_PODCAST } from "./wikidata";
 import { getEpisodesById } from "./getEpisodes";
 import { getPodcastInfo } from "./getPodcastInfo";
 import { wikidataGetEntities } from "./getWikidataEntities";
 import { wikipediaDescription } from "./getWikipediaArticle";
 
-const EXPLICIT_EPISODE = "Q109501804";
-const PODCAST = "Q24634210";
 export async function createXML(
   podcastId: string,
   limit: number
@@ -24,7 +23,7 @@ export async function createXML(
   if (!claims.P31) {
     return null;
   }
-  if (!claims.P31.map((claim: any) => claim.value).includes(PODCAST)) {
+  if (!claims.P31.map((claim: any) => claim.value).includes(WD_PODCAST)) {
     return null;
   }
   const podcastInfo = await getPodcastInfo(podcastId);
@@ -36,6 +35,9 @@ export async function createXML(
   // }
   let imageUrl =
     "https://upload.wikimedia.org/wikipedia/commons/2/27/Square%2C_Inc_-_Square_Logo.jpg";
+  if (podcastInfo[0].logo) {
+    imageUrl = podcastInfo[0].logo;
+  }
   let podcastArray = DESCRIPTIONS.find((d: any) => d.id === podcastId);
   if (podcastArray) {
     descr = `${podcastArray.description}<br />${descr}`;
