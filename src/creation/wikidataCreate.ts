@@ -33,19 +33,10 @@ function extractGuests(text: string, regex: string) {
   }
 }
 
-function findRecordingDate(text: string, regex: string) {
+function findRecordingDate(text: string) {
   try {
-    console.log(regex, text.matchAll(new RegExp(regex, "ig")));
-    let guests = text
-      .split("|")[1]
-      .trim()
-      .split(/,| and | \& |;/)
-      .map((guest) => {
-        return guest.trim();
-      });
-    return guests;
   } catch (e) {
-    return [];
+    return;
   }
 }
 
