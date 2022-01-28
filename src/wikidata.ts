@@ -16,6 +16,10 @@ export const WD_SECOND = "Q11574";
 export const WD_FULL_WORK_URL = "P953";
 export const WD_CONTENT_DELIVERER = "P3274";
 export const WD_FILE_FORMAT = "P2701";
-
-// export const WD_PRODUCTION_CODE = "P2364";
-// export const WD_PRODUCTION_CODE = "P2364";
+export const WD_RECORDING_DATE = "P10135";
+export const WD_RECORDED_AT = "P483";
+export const WD_BASED_ON_HEURISTIC = "P887";
+export const WD_PRESENTER = "P371";
+export const WD_INFERRED_FROM_YOUTUBE_DESCRIPTION = "Q110039923";
+export const WD_INFERRED_FROM_PODCAST_DESCRIPTION = "Q110068003";
+export const WD_INFERRED_FROM_TITLE = "Q69652283";

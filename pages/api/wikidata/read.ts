@@ -11,11 +11,15 @@ export default async function handler(
   const { id } = req.query;
   const podcastID = id as string;
   const podcastInfo = await getPodcastFeed(podcastID);
+  console.log(podcastInfo[0]?.feed);
   if (!podcastInfo[0]?.feed) {
     res.json({ error: true });
   }
   const feedUrl = podcastInfo[0]?.feed;
   let podcastArray = DESCRIPTIONS.find((d: any) => d.id === podcastID);
+  if (podcastArray?.presenter) {
+    podcastArray.presenterId = podcastInfo[0].presenter.value;
+  }
   const feed = await readFeed({
     id: podcastID,
     feedUrl,

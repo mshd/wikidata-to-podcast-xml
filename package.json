@@ -13,6 +13,7 @@
     "@types/wikidata-sdk": "^6.1.0",
     "axios": "^0.25.0",
     "fs": "^0.0.1-security",
+    "locutus": "^2.0.16",
     "luxon": "^2.3.0",
     "next": "12.0.8",
     "podcast": "^2.0.0",
