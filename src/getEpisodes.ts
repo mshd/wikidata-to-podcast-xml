@@ -61,3 +61,32 @@ ORDER BY ${ORDER_BY}(?publicationDate)
     throw new Error("couldn't get episodes");
   }
 }
+
+export async function latestEpisode(podcast: string, limit: number = 1) {
+  const ORDER_BY = "DESC";
+  let query = `#podcast
+SELECT ?item ?itemLabel ?publicationDate 
+WHERE 
+{
+  ?item wdt:P31 wd:Q61855877.
+  ?item wdt:P179 wd:${podcast}.
+  OPTIONAL { ?item wdt:P577 ?publicationDate . }
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel . ?guest rdfs:label ?guestLabel . ?recordedAt rdfs:label ?recordedAtLabel .?mainSubject rdfs:label ?mainSubjectLabel .}
+}
+ORDER BY ${ORDER_BY}(?publicationDate)
+`;
+  if (limit > 0) {
+    query += `\nLIMIT ${limit}`;
+  }
+
+  try {
+    const data = await sparql(query);
+    return {
+      query,
+      data,
+      link: wdk.sparqlQuery(query),
+    };
+  } catch (er) {
+    throw new Error("couldn't get episodes");
+  }
+}

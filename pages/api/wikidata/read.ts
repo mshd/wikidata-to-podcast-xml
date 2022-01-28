@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
+import { DESCRIPTIONS } from "../../../src/podcastDescriptions";
 import { getPodcastFeed } from "../../../src/getPodcastInfo";
 import { readFeed } from "../../../src/creation/readFeed";
 
@@ -14,9 +15,11 @@ export default async function handler(
     res.json({ error: true });
   }
   const feedUrl = podcastInfo[0]?.feed;
+  let podcastArray = DESCRIPTIONS.find((d: any) => d.id === podcastID);
   const feed = await readFeed({
     id: podcastID,
     feedUrl,
+    custom: podcastArray,
   });
   res.json(feed);
 }

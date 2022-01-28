@@ -1,6 +1,7 @@
+import { WD_EXPLICIT_EPISODE, WD_PODCAST } from "./wikidata";
+
 import { DESCRIPTIONS } from "./podcastDescriptions";
 import { Podcast } from "podcast";
-import { WD_PODCAST } from "./wikidata";
 import { getEpisodesById } from "./getEpisodes";
 import { getPodcastInfo } from "./getPodcastInfo";
 import { wikidataGetEntities } from "./getWikidataEntities";
@@ -41,7 +42,9 @@ export async function createXML(
   let podcastArray = DESCRIPTIONS.find((d: any) => d.id === podcastId);
   if (podcastArray) {
     descr = `${podcastArray.description}<br />${descr}`;
-    imageUrl = podcastArray.img;
+    if (podcastArray.img) {
+      imageUrl = podcastArray.img;
+    }
   }
   const feed = new Podcast({
     title: podcast.labels.en,
@@ -119,7 +122,7 @@ export async function createXML(
       date: episode.publicationDate, // any format that js Date can parse.
       enclosure: { url: "https://podcast.nothispute.com/api/redirect?" + url }, // optional enclosure
       itunesDuration: episode.duration,
-      itunesExplicit: episode.hasQuality?.value == EXPLICIT_EPISODE,
+      itunesExplicit: episode.hasQuality?.value == WD_EXPLICIT_EPISODE,
       itunesEpisode: episode.episodeNumber
         ? episode.episodeNumber
         : episode.productionCode,
