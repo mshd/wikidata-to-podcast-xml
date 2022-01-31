@@ -75,7 +75,7 @@ async function mergeWithWikidata(
 ) {
   for (let i in episodes) {
     let match = episodesWikidata.filter(
-      (episode) =>
+      (episode: any) =>
         (episode.spotifyId && episode.spotifyId === episodes[i].spotifyId) ||
         (episode.itunesId && episode.itunesId === episodes[i].itunesId) ||
         (episode.title && episode.title === episodes[i].title) ||
