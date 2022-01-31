@@ -3,7 +3,7 @@ const strtotime = require("locutus/php/datetime/strtotime");
 export function extractGuests(text: string, regex: string, matchIndex: number) {
   try {
     let match = text.match(new RegExp(regex, ""));
-    console.log(match);
+    console.log(match, matchIndex);
     //@ts-ignore
     let guests = match[matchIndex]
       .trim()

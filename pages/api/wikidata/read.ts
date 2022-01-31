@@ -1,6 +1,9 @@
+import {
+  DESCRIPTIONS,
+  DESCRIPTIONS_DEFAULT,
+} from "../../../src/podcastDescriptions";
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { DESCRIPTIONS } from "../../../src/podcastDescriptions";
 import { getPodcastFeed } from "../../../src/wikidata/getPodcastInfo";
 import { readFeed } from "../../../src/import/readFeed";
 
@@ -8,8 +11,10 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  const { id } = req.query;
+  let { id, spotify_token, limit } = req.query;
   const podcastID = id as string;
+  spotify_token = spotify_token as string;
+  let maxEpisodes = limit ? parseFloat(limit as string) : 0;
   const podcastInfo = await getPodcastFeed(podcastID);
   // console.log(podcastInfo);
   // if (!podcastInfo[0]?.feed) {
@@ -18,8 +23,11 @@ export default async function handler(
   // }
   const feedUrl = podcastInfo[0]?.feed;
   let podcastArray = DESCRIPTIONS.find((d: any) => d.id === podcastID);
+  podcastArray = { ...DESCRIPTIONS_DEFAULT, ...podcastArray };
+  console.log(podcastArray);
   if (!podcastArray) {
     res.json({});
+    return;
   }
   if (podcastArray?.presenter) {
     podcastArray.presenterId = podcastInfo[0].presenter.value;
@@ -34,6 +42,8 @@ export default async function handler(
     id: podcastID,
     feedUrl,
     custom: podcastArray,
+    spotify_token,
+    maxEpisodes,
   });
   res.json(feed);
 }

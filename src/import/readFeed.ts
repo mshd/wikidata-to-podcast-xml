@@ -7,7 +7,13 @@ import { createItem } from "./wikidataCreate";
 import { getItunesShowEpisodes } from "../itunes/getEpisodes";
 import { latestEpisode } from "../wikidata/getEpisodes";
 
-type d = { id: string; feedUrl: string; custom: any };
+type d = {
+  id: string;
+  feedUrl: string;
+  custom: any;
+  spotify_token?: string;
+  maxEpisodes?: number;
+};
 
 //https://developer.spotify.com/console/post-playlists/
 const token =
@@ -42,7 +48,8 @@ export async function readFeed(input: d) {
   episodes = await mergeWithSpotify(
     episodes,
     input.custom.spotifyShowId,
-    latestDate
+    latestDate,
+    input.spotify_token ? input.spotify_token : token
   );
   // return latest.data;
   episodes = await mergeWithWikidata(episodes, latest.data);
@@ -58,7 +65,8 @@ export async function readFeed(input: d) {
   // return episodes;
   // await Promise.all(
   //   res.episodes.reverse().map(async (episode) => {
-  for (let i = 0; i < 1; i++) {
+  let length = input.maxEpisodes ? input.maxEpisodes : episodes.length;
+  for (let i = 0; i < length; i++) {
     let episode = episodes[i];
     console.log(episode.title);
     let created = await createItem(episode, input);
@@ -107,9 +115,14 @@ async function mergeWithApple(
 async function mergeWithSpotify(
   episodes: EpisodeExtended[],
   spotifyShowId: string,
-  latestDate: DateTime
+  latestDate: DateTime,
+  spotify_token: string
 ) {
-  let spotifyEpisodes = await getShowEpisodes(spotifyShowId, token, latestDate);
+  let spotifyEpisodes = await getShowEpisodes(
+    spotifyShowId,
+    spotify_token,
+    latestDate
+  );
   for (let i in episodes) {
     let match = spotifyEpisodes.filter(
       (episode) =>
@@ -128,29 +141,29 @@ async function mergeWithSpotify(
   return episodes;
 }
 
-export async function readSpotify(input: d) {
-  let latest = await latestEpisode(input.id);
-  if (latest.data == 0) {
-    latest.data = [{ publicationDate: "2000-01-01" }];
-  } else if (!latest || !latest.data || !latest.data[0].publicationDate) {
-    return [];
-  }
-  let latestDate = DateTime.fromISO(latest.data[0].publicationDate);
-  // console.log(input.custom.itunesShowId);
-  let res = convertSpotifyToFeed(
-    await getShowEpisodes(input.custom.spotifyShowId, token, latestDate)
-  );
-  // console.log(res);
-  // return res;
-  input.custom.spotifyOnly = true;
-  let parsedEpisodes = [];
-  for (let i in res.reverse()) {
-    let pubDate = DateTime.fromISO(res[i].pubDate);
-    //only create new episodes
-    if (latestDate.plus({ days: 1 }) < pubDate) {
-      let created = await createItem(res[i], input);
-      parsedEpisodes.push(created);
-    }
-  }
-  return parsedEpisodes;
-}
+// export async function readSpotify(input: d) {
+//   let latest = await latestEpisode(input.id);
+//   if (latest.data == 0) {
+//     latest.data = [{ publicationDate: "2000-01-01" }];
+//   } else if (!latest || !latest.data || !latest.data[0].publicationDate) {
+//     return [];
+//   }
+//   let latestDate = DateTime.fromISO(latest.data[0].publicationDate);
+//   // console.log(input.custom.itunesShowId);
+//   let res = convertSpotifyToFeed(
+//     await getShowEpisodes(input.custom.spotifyShowId, token, latestDate)
+//   );
+//   // console.log(res);
+//   // return res;
+//   input.custom.spotifyOnly = true;
+//   let parsedEpisodes = [];
+//   for (let i in res.reverse()) {
+//     let pubDate = DateTime.fromISO(res[i].pubDate);
+//     //only create new episodes
+//     if (latestDate.plus({ days: 1 }) < pubDate) {
+//       let created = await createItem(res[i], input);
+//       parsedEpisodes.push(created);
+//     }
+//   }
+//   return parsedEpisodes;
+// }
