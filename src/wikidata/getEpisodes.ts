@@ -1,4 +1,4 @@
-import { WD_PODCAST_IMAGE_URL } from "./wikidata";
+import { WD_PODCAST_IMAGE_URL } from "../wikidata";
 import { sparql } from "./getWikidataSparql";
 //@ts-ignore
 import wdk from "wikidata-sdk";

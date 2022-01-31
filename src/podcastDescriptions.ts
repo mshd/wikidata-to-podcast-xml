@@ -1,16 +1,26 @@
 import { WD_RECORDED_AT } from "./wikidata";
 
 type DESCRIPTION_TYPE = {
-  id: string;
+  id?: string;
   img?: string;
   title?: string;
   description?: string;
   prefix?: string;
   remove?: string[];
   guestMatch?: string;
+  guestMatchIndex?: number;
+  episodeMatch?: string;
   presenter?: boolean;
   presenterId?: string;
   addClaims?: any;
+  spotifyShowId?: string;
+  itunesShowId?: number;
+  seasons?: any; //{ number: string };
+};
+
+export const DESCRIPTIONS_DEFAULT: DESCRIPTION_TYPE = {
+  presenter: false,
+  guestMatchIndex: 2,
 };
 
 export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
@@ -19,6 +29,8 @@ export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
     prefix: "The Ben Shapiro Show - ",
     img: "https://podcast.nothispute.com/images/ben_shapiro3000.jpg",
     title: "The Ben Shapiro Show",
+    episodeMatch: "Show Ep. (\\d{1,4})$",
+    guestMatch: "(.*) | The Ben Shapiro Show Sunday Special",
     presenter: true,
     description: `Daily political podcast and live radio show produced by The Daily Wire and hosted by Ben Shapiro
     
@@ -31,6 +43,7 @@ export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
     remove: ["The Joe Rogan Experience ", "JRE "],
     prefix: "JRE ",
     presenter: true,
+    episodeMatch: "#(\\d{3,4}) ",
     addClaims: {
       [WD_RECORDED_AT]: "Q109352672",
     },
@@ -49,11 +62,14 @@ export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
     img: "https://podcast.nothispute.com/images/jordan_peterson.jpg",
     title: "The Jordan B. Peterson Podcast",
     guestMatch: `\\|(.[^\\|]*)`,
+    guestMatchIndex: 1,
+    seasons: { 4: "Q109265421" },
     description: `Join intellectual phenomenon Dr. Jordan Peterson and his daughter Mikhaila for enlightening discourse that will change the way you think. This podcast breaks down the dichotomy of life through interviews and lectures that explain how individuals and culture are shaped by values, music, religion, and beyond. It will give you a new perspective and a modern understanding of your creativity, competence, and personality.`,
   },
   {
     id: "Q109650493",
     prefix: "The Michael Shermer Show - ",
+    episodeMatch: "#(\\d{3,4}) ",
     presenter: true,
     // guestMatch: `\\d{2,4}. (([A-Z][\\p{L}.]{1,20} ){1,4})`,
     guestMatch: `\\d{2,4}\\. (.*?) (about|on|-|—)`,
@@ -67,7 +83,44 @@ export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
   {
     id: "Q109248984",
     title: "Lex Fridman Podcast",
+    episodeMatch: "#(\\d{3,4}) ",
     prefix: "Lex Fridman Podcast ",
     guestMatch: `\\d (–|\\-) (.*):`,
+    guestMatchIndex: 2,
+  },
+  {
+    id: "Q109943764",
+    prefix: "The Tim Dillon Show ",
+    presenter: true,
+    episodeMatch: "^(\\d{2,4}) ",
+    guestMatch: `\((with|ft\\.) (.*)\)`, //TODO 283 - Joe Rogan
+  },
+  {
+    id: "Q109892507",
+    prefix: "The Megyn Kelly Show ",
+    episodeMatch: "Ep. (\\d{1,4})$",
+    presenter: true,
+    guestMatch: `(with|ft\\.) (.*) \\|`,
+  },
+  {
+    id: "Q110493748",
+    title: "Here's The Thing with Alec Baldwin",
+    presenter: true,
+  },
+  {
+    id: "Q2856080",
+    title: "Radiolab",
+  },
+  {
+    id: "Q61855877",
+    title: "Pod Save America",
+    guestMatch: `(\\(with (.*)\\))`,
+  },
+  {
+    id: "Q48807376",
+    title: "Under The Skin with Russell Brand",
+    prefix: "Under The Skin with Russell Brand - ",
+    episodeMatch: "#(\\d{3,4}) ",
+    guestMatch: `(\\(with (.*)\\))`,
   },
 ];

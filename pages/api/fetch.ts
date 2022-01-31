@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 import { Podcast } from "podcast";
-import { createXML } from "../../src/main";
+import { createXML } from "../../src/createXML";
 import fs from "fs";
 import { fstat } from "fs";
 

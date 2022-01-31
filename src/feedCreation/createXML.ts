@@ -1,11 +1,11 @@
-import { WD_EXPLICIT_EPISODE, WD_PODCAST } from "./wikidata";
+import { DESCRIPTIONS, DESCRIPTIONS_DEFAULT } from "../podcastDescriptions";
+import { WD_EXPLICIT_EPISODE, WD_PODCAST } from "../wikidata";
 
-import { DESCRIPTIONS } from "./podcastDescriptions";
 import { Podcast } from "podcast";
-import { getEpisodesById } from "./getEpisodes";
-import { getPodcastInfo } from "./getPodcastInfo";
-import { wikidataGetEntities } from "./getWikidataEntities";
-import { wikipediaDescription } from "./getWikipediaArticle";
+import { getEpisodesById } from "../wikidata/getEpisodes";
+import { getPodcastInfo } from "../wikidata/getPodcastInfo";
+import { wikidataGetEntities } from "../wikidata/getWikidataEntities";
+import { wikipediaDescription } from "../wikidata/getWikipediaArticle";
 
 export async function createXML(
   podcastId: string,
@@ -40,6 +40,7 @@ export async function createXML(
     imageUrl = podcastInfo[0].logo;
   }
   let podcastArray = DESCRIPTIONS.find((d: any) => d.id === podcastId);
+  podcastArray = { ...DESCRIPTIONS_DEFAULT, ...podcastArray };
   if (podcastArray) {
     descr = `${podcastArray.description}<br />${descr}`;
     if (podcastArray.img) {

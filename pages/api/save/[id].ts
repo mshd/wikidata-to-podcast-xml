@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { createXML } from "../../../src/main";
+import { createXML } from "../../../src/feedCreation/createXML";
 import fs from "fs";
 import path from "path";
 
