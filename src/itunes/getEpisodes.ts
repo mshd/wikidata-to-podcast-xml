@@ -10,7 +10,7 @@ export async function getItunesShowEpisodes(itunesId: number): Promise<any[]> {
     await axios.get(
       "https://itunes.apple.com/lookup?id=" +
         itunesId +
-        "&country=US&media=podcast&entity=podcastEpisode&limit=10"
+        "&country=US&media=podcast&entity=podcastEpisode&limit=10000"
     )
   ).data.results.filter(
     (episode: any) => episode.wrapperType === "podcastEpisode"

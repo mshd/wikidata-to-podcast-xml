@@ -34,9 +34,9 @@ export async function readFeed(input: d) {
   } else if (!latest || !latest.data || !latest.data[0].publicationDate) {
     return [];
   }
-  //  let latestDate = DateTime.fromISO(latest.data[0].publicationDate);
+  let latestDate = DateTime.fromISO(latest.data[0].publicationDate);
 
-  let latestDate = DateTime.fromISO("2021-12-30");
+  // let latestDate = DateTime.fromISO("2021-12-30");
   let episodes = res.episodes as EpisodeExtended[];
   episodes = await mergeWithApple(episodes, input.custom.itunesShowId);
   episodes = await mergeWithSpotify(
@@ -58,7 +58,7 @@ export async function readFeed(input: d) {
   // return episodes;
   // await Promise.all(
   //   res.episodes.reverse().map(async (episode) => {
-  for (let i = 0; i < episodes.length; i++) {
+  for (let i = 0; i < 1; i++) {
     let episode = episodes[i];
     console.log(episode.title);
     let created = await createItem(episode, input);

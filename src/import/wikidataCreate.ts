@@ -182,7 +182,7 @@ export async function createItem(episode: EpisodeExtended, podcast: any) {
   );
   if (productionCode) {
     claims[WD_PRODUCTION_CODE] = {
-      text: productionCode,
+      value: productionCode,
       references: {
         [WD_BASED_ON_HEURISTIC]: WD_INFERRED_FROM_TITLE,
       },
@@ -191,6 +191,7 @@ export async function createItem(episode: EpisodeExtended, podcast: any) {
   if (podcast.custom?.addClaims) {
     claims = { ...claims, ...podcast.custom.addClaims };
   }
+  // return { labels, guests, claims, des: episode.description };
 
   // console.log(claims);
   if (episode.wikidataId) {
