@@ -1,4 +1,9 @@
-import { WD_PODCAST_IMAGE_URL } from "../wikidata";
+import {
+  WD_ITUNES_EPISODE_ID,
+  WD_PODCAST_IMAGE_URL,
+  WD_SPOTIFY_EPISODE_ID,
+} from "../wikidata";
+
 import { sparql } from "./getWikidataSparql";
 //@ts-ignore
 import wdk from "wikidata-sdk";
@@ -65,12 +70,16 @@ ORDER BY ${ORDER_BY}(?publicationDate)
 export async function latestEpisode(podcast: string, limit: number = 1) {
   const ORDER_BY = "DESC";
   let query = `#podcast
-SELECT ?item ?itemLabel ?publicationDate 
+SELECT ?item ?itemLabel ?publicationDate ?title ?spotifyId ?itunesId ?url
 WHERE 
 {
   ?item wdt:P31 wd:Q61855877.
   ?item wdt:P179 wd:${podcast}.
   OPTIONAL { ?item wdt:P577 ?publicationDate . }
+  OPTIONAL { ?item wdt:P1476 ?title .}
+  OPTIONAL { ?item wdt:${WD_SPOTIFY_EPISODE_ID} ?spotifyId . }
+  OPTIONAL { ?item wdt:${WD_ITUNES_EPISODE_ID} ?itunesId . }
+  OPTIONAL { ?item wdt:P953 ?url . }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel . ?guest rdfs:label ?guestLabel . ?recordedAt rdfs:label ?recordedAtLabel .?mainSubject rdfs:label ?mainSubjectLabel .}
 }
 ORDER BY ${ORDER_BY}(?publicationDate)

@@ -53,7 +53,7 @@ export async function createItem(episode: EpisodeExtended, podcast: any) {
     [language]: episode.title,
   };
   const descriptions = {
-    [language]: "podcast episode2",
+    [language]: "podcast episode",
   };
   let url = episode.enclosure.url;
   let contentDelieverer = null;
@@ -86,60 +86,60 @@ export async function createItem(episode: EpisodeExtended, podcast: any) {
       },
     ],
   };
-  // if (url) {
-  //   claims[WD_FULL_WORK_URL] = [
-  //     {
-  //       value: url,
-  //       qualifiers: {
-  //         [WD_CONTENT_DELIVERER]: contentDelieverer,
-  //         [WD_FILE_FORMAT]: fileFormat,
-  //       },
-  //       references: [reference],
-  //     },
-  //   ];
-  // }
-  // if (podcast.custom.seasons && episode.season) {
-  //   let currentSeason = podcast.custom.seasons[episode.season];
-  //   claims[WD_SEASON] = [
-  //     {
-  //       value: currentSeason,
-  //       qualifiers: {
-  //         [WD_NUMBER]: episode.episode,
-  //       },
-  //       // references: [reference],
-  //     },
-  //   ];
-  // }
+  if (url) {
+    claims[WD_FULL_WORK_URL] = [
+      {
+        value: url,
+        qualifiers: {
+          [WD_CONTENT_DELIVERER]: contentDelieverer,
+          [WD_FILE_FORMAT]: fileFormat,
+        },
+        references: [reference],
+      },
+    ];
+  }
+  if (podcast.custom.seasons && episode.season) {
+    let currentSeason = podcast.custom.seasons[episode.season];
+    claims[WD_SEASON] = [
+      {
+        value: currentSeason,
+        qualifiers: {
+          [WD_NUMBER]: episode.episode?.toString(),
+        },
+        // references: [reference],
+      },
+    ];
+  }
 
   if (podcast.custom?.presenterId) {
     claims[WD_PRESENTER] = [{ value: podcast.custom.presenterId }];
   }
-  // if (guests) {
-  //   for (let guestId in guests) {
-  //     if (!claims[WD_GUEST]) {
-  //       claims[WD_GUEST] = [];
-  //     }
-  //     let guest = guests[guestId];
-  //     let guestWikidata = await searchGuest(guest);
-  //     let references = {
-  //       [WD_BASED_ON_HEURISTIC]: WD_INFERRED_FROM_TITLE,
-  //       [WD_STATED_IN_REFERENCE]: guest,
-  //     };
-  //     if (guestWikidata) {
-  //       claims[WD_GUEST].push({
-  //         value: guestWikidata,
-  //         references,
-  //       });
-  //     } else {
-  //       claims[WD_GUEST].push({
-  //         value: {
-  //           snaktype: "somevalue",
-  //         },
-  //         references,
-  //       });
-  //     }
-  //   }
-  // }
+  if (guests) {
+    for (let guestId in guests) {
+      if (!claims[WD_GUEST]) {
+        claims[WD_GUEST] = [];
+      }
+      let guest = guests[guestId];
+      let guestWikidata = await searchGuest(guest);
+      let references = {
+        [WD_BASED_ON_HEURISTIC]: WD_INFERRED_FROM_TITLE,
+        [WD_STATED_IN_REFERENCE]: guest,
+      };
+      if (guestWikidata) {
+        claims[WD_GUEST].push({
+          value: guestWikidata,
+          references,
+        });
+      } else {
+        claims[WD_GUEST].push({
+          value: {
+            snaktype: "somevalue",
+          },
+          references,
+        });
+      }
+    }
+  }
   if (episode.image?.url) {
     claims[WD_PODCAST_IMAGE_URL] = [episode.image?.url];
   }
@@ -155,13 +155,16 @@ export async function createItem(episode: EpisodeExtended, podcast: any) {
       },
     ];
   }
-  claims[WD_HAS_QUALITY] = [];
+  let hasQuality = [];
   if (episode.explicit) {
-    claims[WD_HAS_QUALITY].push(WD_EXPLICIT_EPISODE);
+    hasQuality.push(WD_EXPLICIT_EPISODE);
   }
   const episodeTypeId = WD_EPISODE_TYPE_MATCH[episode.episodeType];
   if (episode.episodeType && episode.episodeType !== "full") {
-    claims[WD_HAS_QUALITY].push(episodeTypeId);
+    hasQuality.push(episodeTypeId);
+  }
+  if (episode.explicit) {
+    claims[WD_HAS_QUALITY] = hasQuality;
   }
   if (episode.itunesId) {
     claims[WD_ITUNES_EPISODE_ID] = [{ value: episode.itunesId.toString() }];
@@ -189,18 +192,32 @@ export async function createItem(episode: EpisodeExtended, podcast: any) {
     claims = { ...claims, ...podcast.custom.addClaims };
   }
 
-  console.log(claims);
-  const { entity } = await wbEdit.entity.create({
-    type: "item",
-    labels,
-    descriptions,
-    aliases,
-    claims,
-    sitelinks: [],
-  });
-  await new Promise((resolve) => setTimeout(resolve, 100000));
+  // console.log(claims);
+  if (episode.wikidataId) {
+    wbEdit.entity.edit({
+      // Required
+      id: episode.wikidataId,
+      reconciliation: {
+        mode: "skip-on-any-value",
+      },
+      // labels: [],
+      descriptions,
+      aliases,
+      claims,
+    });
+    console.log("edited item id");
+  } else {
+    const { entity } = await wbEdit.entity.create({
+      type: "item",
+      labels,
+      descriptions,
+      aliases,
+      claims,
+      sitelinks: [],
+    });
+    console.log("created item id", entity.id);
+  }
+  // await new Promise((resolve) => setTimeout(resolve, 100000));
 
   return { labels, guests, claims, des: episode.description };
-
-  // console.log("created item id", entity.id);
 }

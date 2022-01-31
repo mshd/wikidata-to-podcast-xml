@@ -4,7 +4,6 @@ import getPodcastFromFeed, { Episode, Podcast } from "podparse";
 import { DateTime } from "luxon";
 import axios from "axios";
 import { createItem } from "./wikidataCreate";
-import fs from "fs";
 import { getItunesShowEpisodes } from "../itunes/getEpisodes";
 import { latestEpisode } from "../wikidata/getEpisodes";
 
@@ -12,23 +11,24 @@ type d = { id: string; feedUrl: string; custom: any };
 
 //https://developer.spotify.com/console/post-playlists/
 const token =
-  "BQBYmjFApbUjkZp653BNZB-Sgz1ckvRA_jGgt1oc8XCsGROdGBg9m3uMwGJcSnvNDf1K7QqScyrLgI7VTnKgeb1HkRNuteA_XOK8FssN-sPYwVYQFdMaCdfiHDUlXLedw5btB4UpwoqBaaOAJaLjtFFfIIniKBkmcIHU3YYtaGq8Ic5u-W890KyeJPyIza09Nfns4cWUTiJz6BdjPjkOcJ75anjSk6vHxKMZFCPtOLB7h88Uuu__";
+  "BQCKYnEI3rQhfchaD0iYjwqAOhZ5nxRgFz_5U89bW36HY2BEoVvSLZMbw3tqkO-WEClKdVlgtb0_S1TpzTjo0T2d9KNx9x9NrTMiWn7Q1vL98SmzqzjOBIkGR3-nUuDRvThSO9FMONavEgMqBgRchQMz8DvZefUZh3lTpfsZxNnP7hiGaE-WJ8HLN7MWW9WRqYUI0xtr8N7JBk6H89qsZ1Al6VI-LZKS_KVzI13KBvED4RlgzGqc";
 
 export interface EpisodeExtended extends Episode {
   spotifyId?: string;
   itunesId?: number;
   fyydId?: string;
   panoptikumId?: string;
+  wikidataId?: string;
 }
 
 export async function readFeed(input: d) {
-  // let feed = (await axios.get(input.feedUrl)).data;
-  let feed = await fs.readFileSync(
-    "/home/martin/workspace/wikidata-to-podcast-xml/src/example/example.xml",
-    "utf-8"
-  );
+  let feed = (await axios.get(input.feedUrl)).data;
+  // let feed = await fs.readFileSync(
+  //   "/home/martin/workspace/wikidata-to-podcast-xml/src/example/example.xml",
+  //   "utf-8"
+  // );
   let res = getPodcastFromFeed(feed);
-  let latest = await latestEpisode(input.id);
+  let latest = await latestEpisode(input.id, 10000);
   if (latest.data == 0) {
     latest.data = [{ publicationDate: "2000-01-01" }];
   } else if (!latest || !latest.data || !latest.data[0].publicationDate) {
@@ -38,24 +38,54 @@ export async function readFeed(input: d) {
 
   let latestDate = DateTime.fromISO("2021-12-30");
   let episodes = res.episodes as EpisodeExtended[];
-  // episodes = await mergeWithApple(episodes, input.custom.itunesShowId);
-  // episodes = await mergeWithSpotify(
-  //   episodes,
-  //   input.custom.spotifyShowId,
-  //   latestDate
-  // );
-  let parsedEpisodes = [];
+  episodes = await mergeWithApple(episodes, input.custom.itunesShowId);
+  episodes = await mergeWithSpotify(
+    episodes,
+    input.custom.spotifyShowId,
+    latestDate
+  );
+  // return latest.data;
+  episodes = await mergeWithWikidata(episodes, latest.data);
+  let parsedEpisodes: any[] = [];
 
-  for (let i in res.episodes.reverse()) {
-    let pubDate = DateTime.fromISO(res.episodes[i].pubDate);
-    //only create new episodes
-    if (latestDate.plus({ days: 1 }) < pubDate) {
-      console.log(res.episodes[i].title);
-      let created = await createItem(res.episodes[i], input);
-      parsedEpisodes.push(created);
+  //only create new episodes
+  episodes = episodes
+    .reverse()
+    .filter(
+      (episode) =>
+        latestDate.plus({ days: 1 }) < DateTime.fromISO(episode.pubDate)
+    );
+  // return episodes;
+  // await Promise.all(
+  //   res.episodes.reverse().map(async (episode) => {
+  for (let i = 0; i < episodes.length; i++) {
+    let episode = episodes[i];
+    console.log(episode.title);
+    let created = await createItem(episode, input);
+    // await new Promise((resolve) => setTimeout(resolve, 100000));
+    parsedEpisodes.push(created);
+  }
+
+  return parsedEpisodes;
+}
+
+async function mergeWithWikidata(
+  episodes: EpisodeExtended[],
+  episodesWikidata: any
+) {
+  for (let i in episodes) {
+    let match = episodesWikidata.filter(
+      (episode) =>
+        (episode.spotifyId && episode.spotifyId === episodes[i].spotifyId) ||
+        (episode.itunesId && episode.itunesId === episodes[i].itunesId) ||
+        (episode.title && episode.title === episodes[i].title) ||
+        (episode.url && episode.url === episodes[i].enclosure.url)
+    );
+    if (match.length) {
+      episodes[i].wikidataId = match[0].item.value;
     }
   }
-  return parsedEpisodes;
+  return episodes;
 }
 
 async function mergeWithApple(
@@ -82,10 +112,17 @@ async function mergeWithSpotify(
   let spotifyEpisodes = await getShowEpisodes(spotifyShowId, token, latestDate);
   for (let i in episodes) {
     let match = spotifyEpisodes.filter(
-      (episode) => episode.name === episodes[i].title //match title because Spotify doesn't have GUID
+      (episode) =>
+        episode.name === episodes[i].title || //match title because Spotify doesn't have GUID
+        (episode.release_date &&
+          episode.duration_ms &&
+          episode.release_date === episodes[i].pubDate &&
+          episode.duration_ms / 1000 - episodes[i].duration < 3) //match same pubDate and duration
     );
     if (match.length) {
       episodes[i].spotifyId = match[0].href.split("episodes/")[1];
+    } else {
+      console.log("cound't find spotify for: " + episodes[i].title);
     }
   }
   return episodes;
@@ -112,9 +149,6 @@ export async function readSpotify(input: d) {
     //only create new episodes
     if (latestDate.plus({ days: 1 }) < pubDate) {
       let created = await createItem(res[i], input);
-      return created;
-      await new Promise((resolve) => setTimeout(resolve, 100000));
-
       parsedEpisodes.push(created);
     }
   }
