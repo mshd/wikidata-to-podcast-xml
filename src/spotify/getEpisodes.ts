@@ -1,7 +1,8 @@
+//@ts-nocheck
 import { Episode, EpisodeType } from "podparse";
 
 import { DateTime } from "luxon";
-import { EpisodeExtended } from "../creation/readFeed";
+import { EpisodeExtended } from "../import/readFeed";
 import { EpisodeObject } from "./episodeType";
 import axios from "axios";
 
@@ -62,12 +63,14 @@ export function convertSpotifyToFeed(
       pubDate: item.release_date,
       explicit: item.explicit,
       description: item.description,
+      guid: item.href,
+
       spotifyId: item.href.split("episodes/")[1],
       image: item.images[0].url,
       author: "",
       summary: "",
       enclosure: { url: "" },
-      // episodeType: EpisodeType.Full,
+      // episodeType: EpisodeType.Full,//error check
       lastBuildDate: "",
     };
     items.push(itemFeed);

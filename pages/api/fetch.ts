@@ -1,9 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import { Podcast } from "podcast";
-import { createXML } from "../../src/createXML";
-import fs from "fs";
-import { fstat } from "fs";
+import { createXML } from "../../src/feedCreation/createXML";
 
 type Data = {
   error?: string;
@@ -34,7 +31,6 @@ export default async function handler(
   //   feed
   // );
   res.statusCode = 200;
-  // res.json({ name: "Jordan Peterson", fetched: true });
   // res.setHeader("Content-Type", "application/xml");
   res.end(feed);
 }

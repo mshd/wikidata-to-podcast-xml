@@ -193,7 +193,7 @@ export async function createItem(episode: EpisodeExtended, podcast: any) {
   }
   // return { labels, guests, claims, des: episode.description };
 
-  // console.log(claims);
+  console.log(claims);
   if (episode.wikidataId) {
     wbEdit.entity.edit({
       // Required
