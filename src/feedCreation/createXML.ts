@@ -2,8 +2,10 @@ import { DESCRIPTIONS, DESCRIPTIONS_DEFAULT } from "../podcastDescriptions";
 import { WD_EXPLICIT_EPISODE, WD_PODCAST } from "../wikidata";
 
 import { Podcast } from "podcast";
+import fs from "fs";
 import { getEpisodesById } from "../wikidata/getEpisodes";
 import { getPodcastInfo } from "../wikidata/getPodcastInfo";
+import path from "path";
 import { wikidataGetEntities } from "../wikidata/getWikidataEntities";
 import { wikipediaDescription } from "../wikidata/getWikipediaArticle";
 
@@ -91,7 +93,7 @@ export async function createXML(
     episode.wikidataUrl = `https://www.wikidata.org/wiki/${episode.item.value}`;
     let desc = ``;
     // let desc = `This is an episode. <br />Item on Wikidata: ${episode.wikidataUrl}`;
-    if (episode.guests) {
+    if (episode.guests && !episode.guests.match(/\.well-known/)) {
       desc += `<br />Guests: ${episode.guests}`;
     }
     if (episode.topics) {
@@ -108,6 +110,20 @@ export async function createXML(
     if (episode.wikipedia) {
       let wikipediaGuests = episode.wikipedia.split("|");
       desc += `<br />` + (await wikipediaDescription(wikipediaGuests));
+    }
+    if (!episode.url && episode.youtube && podcastArray.download) {
+      const file = path.resolve(
+        __dirname,
+        "../../../../../public/yt/" + episode.youtube + ".mp3"
+      );
+      console.log(file);
+      if (fs.existsSync(file)) {
+        episode.url =
+          "https://podcast.nothispute.com/yt/" + episode.youtube + ".mp3";
+      }
+    }
+    if (!episode.url) {
+      continue;
     }
     const url = new URLSearchParams({
       url: episode.url,

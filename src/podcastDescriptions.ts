@@ -16,6 +16,7 @@ type DESCRIPTION_TYPE = {
   spotifyShowId?: string;
   itunesShowId?: number;
   seasons?: any; //{ number: string };
+  download?: boolean;
 };
 
 export const DESCRIPTIONS_DEFAULT: DESCRIPTION_TYPE = {
@@ -124,5 +125,11 @@ export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
     prefix: "Under The Skin with Russell Brand - ",
     episodeMatch: "#(\\d{3,4}) ",
     guestMatch: `(\\(with (.*)\\))`,
+  },
+  {
+    id: "Q110783309",
+    title: "Deddy Corbuzier Podcast",
+    download: true,
+    img: "https://d3t3ozftmdmh3i.cloudfront.net/production/podcast_uploaded_nologo/3292581/3292581-1582607586354-90856d151bba7.jpg",
   },
 ];
