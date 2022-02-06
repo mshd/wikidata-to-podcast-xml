@@ -43,7 +43,7 @@ export class YoutubeMp3DowloaderCustom {
   }
 }
 export function downloadVideos(list: string[]) {
-  const folder = path.resolve(__dirname, "../../../../../public/yt/");
+  const folder = process.env.PROJECT_ROOT + "/public/yt";
   const dowloaderMp3 = new YoutubeMp3DowloaderCustom({
     ffmpegPath: "/usr/bin/ffmpeg", // FFmpeg binary location
     outputPath: folder, // Output file location (default: the home directory)

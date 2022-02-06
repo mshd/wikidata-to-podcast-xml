@@ -1,11 +1,11 @@
 import { DESCRIPTIONS, DESCRIPTIONS_DEFAULT } from "../podcastDescriptions";
 import { WD_EXPLICIT_EPISODE, WD_PODCAST } from "../wikidata";
+import path, { dirname } from "path";
 
 import { Podcast } from "podcast";
 import fs from "fs";
 import { getEpisodesById } from "../wikidata/getEpisodes";
 import { getPodcastInfo } from "../wikidata/getPodcastInfo";
-import path from "path";
 import { wikidataGetEntities } from "../wikidata/getWikidataEntities";
 import { wikipediaDescription } from "../wikidata/getWikipediaArticle";
 
@@ -112,10 +112,8 @@ export async function createXML(
       desc += `<br />` + (await wikipediaDescription(wikipediaGuests));
     }
     if (!episode.url && episode.youtube && podcastArray.download) {
-      const file = path.resolve(
-        __dirname,
-        "../../../../../public/yt/" + episode.youtube + ".mp3"
-      );
+      const file =
+        process.env.PROJECT_ROOT + "/public/yt/" + episode.youtube + ".mp3";
       console.log(file);
       if (fs.existsSync(file)) {
         episode.url =
