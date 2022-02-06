@@ -1,3 +1,4 @@
+import { EpisodeExtended, d } from "./readFeed";
 import {
   WD_BASED_ON_HEURISTIC,
   WD_CONTENT_DELIVERER,
@@ -34,13 +35,12 @@ import {
 
 // import { DateTime } from "luxon";
 import { Episode } from "podparse";
-import { EpisodeExtended } from "./readFeed";
 import { generalConfig } from "./wikidataConfig";
 import { searchGuest } from "./searchGuests";
 
 const wbEdit = require("wikibase-edit")(generalConfig);
 
-export async function createItem(episode: EpisodeExtended, podcast: any) {
+export async function createItem(episode: EpisodeExtended, podcast: d) {
   const language = "en";
   let wikidataLabel = episode.title;
   if (podcast?.custom?.prefix) {
@@ -194,31 +194,32 @@ export async function createItem(episode: EpisodeExtended, podcast: any) {
   // return { labels, guests, claims, des: episode.description };
 
   console.log(claims);
-  if (episode.wikidataId) {
-    wbEdit.entity.edit({
-      // Required
-      id: episode.wikidataId,
-      reconciliation: {
-        mode: "skip-on-any-value",
-      },
-      // labels: [],
-      descriptions,
-      aliases,
-      claims,
-    });
-    console.log("edited item id");
-  } else {
-    const { entity } = await wbEdit.entity.create({
-      type: "item",
-      labels,
-      descriptions,
-      aliases,
-      claims,
-      sitelinks: [],
-    });
-    console.log("created item id", entity.id);
+  if (podcast.write) {
+    if (episode.wikidataId) {
+      wbEdit.entity.edit({
+        // Required
+        id: episode.wikidataId,
+        reconciliation: {
+          mode: "skip-on-any-value",
+        },
+        // labels: [],
+        descriptions,
+        aliases,
+        claims,
+      });
+      console.log("edited item id");
+    } else {
+      const { entity } = await wbEdit.entity.create({
+        type: "item",
+        labels,
+        descriptions,
+        aliases,
+        claims,
+        sitelinks: [],
+      });
+      console.log("created item id", entity.id);
+    }
   }
-  // await new Promise((resolve) => setTimeout(resolve, 100000));
 
   return { labels, guests, claims, des: episode.description };
 }

@@ -7,12 +7,13 @@ import { createItem } from "./wikidataCreate";
 import { getItunesShowEpisodes } from "../itunes/getEpisodes";
 import { latestEpisode } from "../wikidata/getEpisodes";
 
-type d = {
+export type d = {
   id: string;
   feedUrl: string;
   custom: any;
   spotify_token?: string;
   maxEpisodes?: number;
+  write: boolean;
 };
 
 //https://developer.spotify.com/console/post-playlists/
@@ -44,15 +45,21 @@ export async function readFeed(input: d) {
 
   // let latestDate = DateTime.fromISO("2021-12-30");
   let episodes = res.episodes as EpisodeExtended[];
-  episodes = await mergeWithApple(episodes, input.custom.itunesShowId);
-  episodes = await mergeWithSpotify(
-    episodes,
-    input.custom.spotifyShowId,
-    latestDate,
-    input.spotify_token ? input.spotify_token : token
-  );
+  // episodes = await mergeWithApple(episodes, input.custom.itunesShowId);
+  // try {
+  //   episodes = await mergeWithSpotify(
+  //     episodes,
+  //     input.custom.spotifyShowId,
+  //     latestDate,
+  //     input.spotify_token ? input.spotify_token : token
+  //   );
+  // } catch (e) {
+  //   throw new Error(
+  //     "Could not get spotify episodes, please set access token using &spotify_token=xxx, please get a token here https://developer.spotify.com/console/post-playlists/"
+  //   );
+  // }
   // return latest.data;
-  episodes = await mergeWithWikidata(episodes, latest.data);
+  // episodes = await mergeWithWikidata(episodes, latest.data);
   let parsedEpisodes: any[] = [];
 
   //only create new episodes

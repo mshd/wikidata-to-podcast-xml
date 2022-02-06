@@ -11,7 +11,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  let { id, spotify_token, limit } = req.query;
+  let { id, spotify_token, limit, write } = req.query;
   const podcastID = id as string;
   spotify_token = spotify_token as string;
   let maxEpisodes = limit ? parseFloat(limit as string) : 0;
@@ -44,6 +44,7 @@ export default async function handler(
     custom: podcastArray,
     spotify_token,
     maxEpisodes,
+    write: !!write,
   });
   res.json(feed);
 }

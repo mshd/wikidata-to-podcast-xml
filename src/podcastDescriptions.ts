@@ -71,6 +71,7 @@ export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
     prefix: "The Michael Shermer Show - ",
     episodeMatch: "#(\\d{3,4}) ",
     presenter: true,
+    guestMatchIndex: 1,
     // guestMatch: `\\d{2,4}. (([A-Z][\\p{L}.]{1,20} ){1,4})`,
     guestMatch: `\\d{2,4}\\. (.*?) (about|on|-|—)`,
   },
@@ -104,6 +105,7 @@ export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
   },
   {
     id: "Q110493748",
+    prefix: "Here's The Thing with Alec Baldwin - ",
     title: "Here's The Thing with Alec Baldwin",
     presenter: true,
   },

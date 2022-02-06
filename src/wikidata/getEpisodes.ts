@@ -56,7 +56,7 @@ ORDER BY ${ORDER_BY}(?publicationDate)
   }
   try {
     const data = await sparql(query);
-    // fs.writeFileSync("ids.json", JSON.stringify(ids));
+    // fs.("ids.json", JSON.stringify(ids));
     return {
       query,
       data,
