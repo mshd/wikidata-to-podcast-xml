@@ -58,7 +58,11 @@ export function downloadVideos(list: string[]) {
   list.forEach((id) => {
     console.log(folder + "/" + id + ".mp3");
     if (!fs.existsSync(folder + "/" + id + ".mp3")) {
-      dowloaderMp3.getMp3(id);
+      try {
+        dowloaderMp3.getMp3(id);
+      } catch (err) {
+        console.log("error downloading: ", id);
+      }
     }
   });
 }
