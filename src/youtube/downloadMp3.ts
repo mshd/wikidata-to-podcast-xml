@@ -48,7 +48,7 @@ export function downloadVideos(list: string[]) {
     ffmpegPath: "/usr/bin/ffmpeg", // FFmpeg binary location
     outputPath: folder, // Output file location (default: the home directory)
     youtubeVideoQuality: "highestaudio", // Desired video quality (default: highestaudio)
-    queueParallelism: 2, // Download parallelism (default: 1)
+    queueParallelism: 4, // Download parallelism (default: 1)
     progressTimeout: 2000, // Interval in ms for the progress reports (default: 1000)
     allowWebm: false,
   });
@@ -56,7 +56,8 @@ export function downloadVideos(list: string[]) {
   // dowloaderMp3.getMp3("https://www.youtube.com/watch?v=dQw4w9WgXcQ");
   // dowloaderMp3.getMp3("https://www.youtube.com/watch?v=4N1iwQxiHrs");
   list.forEach((id) => {
-    if (!fs.existsSync(folder + id + ".mp3")) {
+    console.log(folder + "/" + id + ".mp3");
+    if (!fs.existsSync(folder + "/" + id + ".mp3")) {
       dowloaderMp3.getMp3(id);
     }
   });
