@@ -18,12 +18,12 @@ export const generalConfig = {
     oauth: {
       // Obtained at registration
       // https://www.mediawiki.org/wiki/OAuth/For_Developers#Registration
-      consumer_key: "08b3c680e03484bd521b28ed6266c621",
-      consumer_secret: "6f0870171bf1ad2b938a60ad824ccf7781968b5d",
+      consumer_key: process.env.WD_CONSUMER_TOKEN,
+      consumer_secret: process.env.WD_CONSUMER_SECRET,
       // Obtained when the user authorized your service
       // see https://www.mediawiki.org/wiki/OAuth/For_Developers#Authorization
-      token: "cbc3cd1bbdf6157a8007204e7c0af0c7",
-      token_secret: "c8e97ae2502df4411400de2c4f761c78729acbc1",
+      token: process.env.WD_ACCESS_TOKEN,
+      token_secret: process.env.WD_ACCESS_SECRET,
     },
   },
 

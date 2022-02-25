@@ -19,8 +19,7 @@ export type d = {
 };
 
 //https://developer.spotify.com/console/post-playlists/
-const token =
-  "BQCKYnEI3rQhfchaD0iYjwqAOhZ5nxRgFz_5U89bW36HY2BEoVvSLZMbw3tqkO-WEClKdVlgtb0_S1TpzTjo0T2d9KNx9x9NrTMiWn7Q1vL98SmzqzjOBIkGR3-nUuDRvThSO9FMONavEgMqBgRchQMz8DvZefUZh3lTpfsZxNnP7hiGaE-WJ8HLN7MWW9WRqYUI0xtr8N7JBk6H89qsZ1Al6VI-LZKS_KVzI13KBvED4RlgzGqc";
+const token = process.env.SPOTIFY_TOKEN;
 
 export interface EpisodeExtended extends Episode {
   spotifyId?: string;
