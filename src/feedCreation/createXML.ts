@@ -1,19 +1,22 @@
 import { DESCRIPTIONS, DESCRIPTIONS_DEFAULT } from "../podcastDescriptions";
-import { WD_EXPLICIT_EPISODE, WD_PODCAST } from "../wikidata";
 import path, { dirname } from "path";
 
 import { Podcast } from "podcast";
 import fs from "fs";
 import { getEpisodesById } from "../wikidata/getEpisodes";
 import { getPodcastInfo } from "../wikidata/getPodcastInfo";
-import { wikidataGetEntities } from "../wikidata/getWikidataEntities";
-import { wikipediaDescription } from "../wikidata/getWikipediaArticle";
+import {
+  getSimplifiedWikidataEntities,
+  getWikipediaDescription,
+  WD_EXPLICIT_EPISODE,
+  WD_PODCAST,
+} from "@entitree/wikidata-helper";
 
 export async function createXML(
   podcastId: string,
   limit: number
 ): Promise<string | null> {
-  const podcast = await wikidataGetEntities([podcastId]);
+  const podcast = (await getSimplifiedWikidataEntities([podcastId]))[podcastId];
   if (!podcast.claims) {
     return null;
   }
@@ -50,7 +53,7 @@ export async function createXML(
     }
   }
   const feed = new Podcast({
-    title: podcast.labels.en,
+    title: podcast.labels[podcastArray.languageCode!],
     description:
       descr +
       `<br /><br />This podcast is auto-generated.<br>Language: ${podcastInfo[0].language?.label}`,
@@ -109,7 +112,12 @@ export async function createXML(
     }
     if (episode.wikipedia) {
       let wikipediaGuests = episode.wikipedia.split("|");
-      desc += `<br />` + (await wikipediaDescription(wikipediaGuests));
+      desc +=
+        `<br />` +
+        (await getWikipediaDescription(
+          wikipediaGuests,
+          podcastArray.languageCode!
+        ));
     }
     if (!episode.url && episode.youtube && podcastArray.download) {
       const file =

@@ -1,6 +1,8 @@
-import { WD_FEED_URL, WD_PODCAST_IMAGE_URL } from "../wikidata";
-
-import { sparql } from "./getWikidataSparql";
+import {
+  getWikidataSparql,
+  WD_PODCAST_LOGO_URL,
+  WD_WEB_FEED_URL,
+} from "@entitree/wikidata-helper";
 
 export async function getPodcastInfo(podcast: string) {
   let data = `SELECT ?item ?itemLabel ?language ?languageLabel ?languageCode ?genre ?genreLabel ?producer ?producerLabel  ?presenter ?presenterLabel ?itunesGenre ?itunesGenreId ?logo
@@ -15,11 +17,11 @@ WHERE
   OPTIONAL { ?item wdt:P371 ?presenter. }  
   OPTIONAL { ?item wdt:P10150 ?itunesGenre. }  
   OPTIONAL { ?itunesGenre wdt:P10151 ?itunesGenreId. }  
-  OPTIONAL { ?item wdt:${WD_PODCAST_IMAGE_URL} ?logo. }  
+  OPTIONAL { ?item wdt:${WD_PODCAST_LOGO_URL} ?logo. }  
 
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
 }`;
-  const ids = await sparql(data);
+  const ids = await getWikidataSparql(data);
   return ids;
 }
 
@@ -30,7 +32,7 @@ WHERE
   VALUES ?item {wd:${podcast}}
   OPTIONAL { ?item wdt:P407 ?language.
   ?language wdt:P218 ?languageCode . }
-  OPTIONAL { ?item wdt:${WD_FEED_URL} ?feed. }  
+  OPTIONAL { ?item wdt:${WD_WEB_FEED_URL} ?feed. }  
   OPTIONAL { ?item wdt:P136 ?genre. }  
   OPTIONAL { ?item wdt:P5916 ?spotifyShowId. }  
   OPTIONAL { ?item wdt:P5842 ?itunesShowId. }    
@@ -38,10 +40,10 @@ WHERE
   OPTIONAL { ?item wdt:P371 ?presenter. }  
   OPTIONAL { ?item wdt:P10150 ?itunesGenre. }  
   OPTIONAL { ?itunesGenre wdt:P10151 ?itunesGenreId. }  
-  OPTIONAL { ?item wdt:${WD_PODCAST_IMAGE_URL} ?logo. }  
+  OPTIONAL { ?item wdt:${WD_PODCAST_LOGO_URL} ?logo. }  
 
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
 }`;
-  const ids = await sparql(data);
+  const ids = await getWikidataSparql(data);
   return ids;
 }

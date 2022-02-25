@@ -1,11 +1,13 @@
-import { convertSpotifyToFeed, getShowEpisodes } from "../spotify/getEpisodes";
 import getPodcastFromFeed, { Episode, Podcast } from "podparse";
 
 import { DateTime } from "luxon";
 import axios from "axios";
 import { createItem } from "./wikidataCreate";
-import { getItunesShowEpisodes } from "../itunes/getEpisodes";
 import { latestEpisode } from "../wikidata/getEpisodes";
+import {
+  getItunesShowEpisodes,
+  getSpotifyShowEpisodes,
+} from "@entitree/wikidata-helper";
 
 export type d = {
   id: string;
@@ -125,7 +127,7 @@ async function mergeWithSpotify(
   latestDate: DateTime,
   spotify_token: string
 ) {
-  let spotifyEpisodes = await getShowEpisodes(
+  let spotifyEpisodes = await getSpotifyShowEpisodes(
     spotifyShowId,
     spotify_token,
     latestDate

@@ -1,4 +1,4 @@
-import { WD_RECORDED_AT } from "./wikidata";
+import { WD_RECORDED_AT_STUDIO_OR_VENUE } from "@entitree/wikidata-helper";
 
 type DESCRIPTION_TYPE = {
   id?: string;
@@ -17,11 +17,13 @@ type DESCRIPTION_TYPE = {
   itunesShowId?: number;
   seasons?: any; //{ number: string };
   download?: boolean;
+  languageCode?: string;
 };
 
 export const DESCRIPTIONS_DEFAULT: DESCRIPTION_TYPE = {
   presenter: false,
   guestMatchIndex: 2,
+  languageCode: "en",
 };
 
 export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
@@ -46,7 +48,7 @@ export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
     presenter: true,
     episodeMatch: "#(\\d{3,4}) ",
     addClaims: {
-      [WD_RECORDED_AT]: "Q109352672",
+      [WD_RECORDED_AT_STUDIO_OR_VENUE]: "Q109352672",
     },
     img: "https://podcast.nothispute.com/images/jre1500.jpg",
     title: "The Joe Rogan Experience",
@@ -130,6 +132,14 @@ export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
     id: "Q110783309",
     title: "Deddy Corbuzier Podcast",
     download: true,
-    img: "https://d3t3ozftmdmh3i.cloudfront.net/production/podcast_uploaded_nologo/3292581/3292581-1582607586354-90856d151bba7.jpg",
+    languageCode: "id",
+    description: `Podcast ini merupakan konten di Channel Youtube "Deddy Corbuzier" yang membahas tentang kondisi terkini di Indonesia, berita terbaru, kisah inspiratif, dan sisi lain para narasumber yang belum banyak diketahui masyarakat.`,
+    img:
+      "https://d3t3ozftmdmh3i.cloudfront.net/production/podcast_uploaded_nologo/3292581/3292581-1582607586354-90856d151bba7.jpg",
+  },
+  {
+    id: "Q109750235",
+    title: "The Tim Ferriss Show",
+    prefix: "The Tim Ferriss Show ",
   },
 ];

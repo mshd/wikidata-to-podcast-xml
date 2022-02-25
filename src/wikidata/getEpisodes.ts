@@ -1,11 +1,11 @@
 import {
-  WD_ITUNES_EPISODE_ID,
-  WD_PODCAST_IMAGE_URL,
-  WD_SPOTIFY_EPISODE_ID,
-} from "../wikidata";
+  getWikidataSparql,
+  WD_APPLE_PODCASTS_PODCAST_EPISODE_ID,
+  WD_PODCAST_LOGO_URL,
+  WD_SPOTIFY_SHOW_EPISODE_ID,
+  WD_YOUTUBE_VIDEO_ID,
+} from "@entitree/wikidata-helper";
 
-import { WD_YOUTUBE_VIDEO_ID } from "./properties";
-import { sparql } from "./getWikidataSparql";
 //@ts-ignore
 import wdk from "wikidata-sdk";
 
@@ -34,7 +34,7 @@ WHERE
   OPTIONAL { ?item wdt:P2364 ?productionCode . }
   OPTIONAL { ?item wdt:P921 ?mainSubject . }
   OPTIONAL { ?item wdt:${WD_YOUTUBE_VIDEO_ID} ?youtube . }
-  OPTIONAL { ?item wdt:${WD_PODCAST_IMAGE_URL} ?image . }
+  OPTIONAL { ?item wdt:${WD_PODCAST_LOGO_URL} ?image . }
   OPTIONAL { ?item p:P4908 ?seasonStatement . 
              ?seasonStatement ps:P4908 ?season.
              ?seasonStatement pq:P1545 ?episodeNumber.
@@ -57,7 +57,7 @@ ORDER BY ${ORDER_BY}(?publicationDate)
     query += `\nLIMIT ${limit}`;
   }
   try {
-    const data = await sparql(query);
+    const data = await getWikidataSparql(query);
     // fs.("ids.json", JSON.stringify(ids));
     return {
       query,
@@ -79,8 +79,8 @@ WHERE
   ?item wdt:P179 wd:${podcast}.
   OPTIONAL { ?item wdt:P577 ?publicationDate . }
   OPTIONAL { ?item wdt:P1476 ?title .}
-  OPTIONAL { ?item wdt:${WD_SPOTIFY_EPISODE_ID} ?spotifyId . }
-  OPTIONAL { ?item wdt:${WD_ITUNES_EPISODE_ID} ?itunesId . }
+  OPTIONAL { ?item wdt:${WD_SPOTIFY_SHOW_EPISODE_ID} ?spotifyId . }
+  OPTIONAL { ?item wdt:${WD_APPLE_PODCASTS_PODCAST_EPISODE_ID} ?itunesId . }
   OPTIONAL { ?item wdt:P953 ?url . }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". ?item rdfs:label ?itemLabel . ?guest rdfs:label ?guestLabel . ?recordedAt rdfs:label ?recordedAtLabel .?mainSubject rdfs:label ?mainSubjectLabel .}
 }
@@ -91,7 +91,7 @@ ORDER BY ${ORDER_BY}(?publicationDate)
   }
 
   try {
-    const data = await sparql(query);
+    const data = await getWikidataSparql(query);
     return {
       query,
       data,

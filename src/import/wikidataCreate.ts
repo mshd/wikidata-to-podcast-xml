@@ -1,32 +1,32 @@
 import { EpisodeExtended, d } from "./readFeed";
 import {
+  WD_APPLE_PODCASTS_PODCAST_EPISODE_ID,
   WD_BASED_ON_HEURISTIC,
   WD_CONTENT_DELIVERER,
   WD_DURATION,
   WD_EPISODE_TYPE_MATCH,
   WD_EXPLICIT_EPISODE,
   WD_FILE_FORMAT,
-  WD_FULL_WORK_URL,
-  WD_GUEST,
+  WD_FULL_WORK_AVAILABLE_AT_URL,
   WD_HAS_QUALITY,
   WD_INFERRED_FROM_PODCAST_DESCRIPTION,
   WD_INFERRED_FROM_TITLE,
   WD_INSTANCE_OF,
-  WD_ITUNES_EPISODE_ID,
-  WD_NUMBER,
+  WD_PART_OF_THE_SERIES,
   WD_PODCAST_EPISODE,
-  WD_PODCAST_IMAGE_URL,
+  WD_PODCAST_LOGO_URL,
   WD_PRESENTER,
   WD_PRODUCTION_CODE,
   WD_PUBLICATION_DATE,
   WD_RECORDING_DATE,
   WD_SEASON,
   WD_SECOND,
-  WD_SERIES,
-  WD_SPOTIFY_EPISODE_ID,
-  WD_STATED_IN_REFERENCE,
+  WD_SERIES_ORDINAL,
+  WD_SPOTIFY_SHOW_EPISODE_ID,
+  WD_STATED_IN_REFERENCE_AS,
+  WD_TALK_SHOW_GUEST,
   WD_TITLE,
-} from "../wikidata";
+} from "@entitree/wikidata-helper";
 import {
   extractGuests,
   extractProductionCode,
@@ -78,7 +78,7 @@ export async function createItem(episode: EpisodeExtended, podcast: d) {
   let claims: any = {
     [WD_INSTANCE_OF]: [WD_PODCAST_EPISODE],
     [WD_TITLE]: [{ text: episode.title, language }],
-    [WD_SERIES]: [podcast.id],
+    [WD_PART_OF_THE_SERIES]: [podcast.id],
     [WD_DURATION]: [{ amount: Math.floor(episode.duration), unit: WD_SECOND }],
     [WD_PUBLICATION_DATE]: [
       {
@@ -87,7 +87,7 @@ export async function createItem(episode: EpisodeExtended, podcast: d) {
     ],
   };
   if (url) {
-    claims[WD_FULL_WORK_URL] = [
+    claims[WD_FULL_WORK_AVAILABLE_AT_URL] = [
       {
         value: url,
         qualifiers: {
@@ -104,7 +104,7 @@ export async function createItem(episode: EpisodeExtended, podcast: d) {
       {
         value: currentSeason,
         qualifiers: {
-          [WD_NUMBER]: episode.episode?.toString(),
+          [WD_SERIES_ORDINAL]: episode.episode?.toString(),
         },
         // references: [reference],
       },
@@ -116,22 +116,22 @@ export async function createItem(episode: EpisodeExtended, podcast: d) {
   }
   if (guests) {
     for (let guestId in guests) {
-      if (!claims[WD_GUEST]) {
-        claims[WD_GUEST] = [];
+      if (!claims[WD_TALK_SHOW_GUEST]) {
+        claims[WD_TALK_SHOW_GUEST] = [];
       }
       let guest = guests[guestId];
       let guestWikidata = await searchGuest(guest);
       let references = {
         [WD_BASED_ON_HEURISTIC]: WD_INFERRED_FROM_TITLE,
-        [WD_STATED_IN_REFERENCE]: guest,
+        [WD_STATED_IN_REFERENCE_AS]: guest,
       };
       if (guestWikidata) {
-        claims[WD_GUEST].push({
+        claims[WD_TALK_SHOW_GUEST].push({
           value: guestWikidata,
           references,
         });
       } else {
-        claims[WD_GUEST].push({
+        claims[WD_TALK_SHOW_GUEST].push({
           value: {
             snaktype: "somevalue",
           },
@@ -141,7 +141,7 @@ export async function createItem(episode: EpisodeExtended, podcast: d) {
     }
   }
   if (episode.image?.url) {
-    claims[WD_PODCAST_IMAGE_URL] = [episode.image?.url];
+    claims[WD_PODCAST_LOGO_URL] = [episode.image?.url];
   }
   let recordedDate = extractRecordingDate(episode.description);
   if (recordedDate) {
@@ -150,7 +150,7 @@ export async function createItem(episode: EpisodeExtended, podcast: d) {
         time: recordedDate.value,
         references: {
           [WD_BASED_ON_HEURISTIC]: WD_INFERRED_FROM_PODCAST_DESCRIPTION,
-          [WD_STATED_IN_REFERENCE]: recordedDate.statedAs,
+          [WD_STATED_IN_REFERENCE_AS]: recordedDate.statedAs,
         },
       },
     ];
@@ -167,10 +167,12 @@ export async function createItem(episode: EpisodeExtended, podcast: d) {
     claims[WD_HAS_QUALITY] = hasQuality;
   }
   if (episode.itunesId) {
-    claims[WD_ITUNES_EPISODE_ID] = [{ value: episode.itunesId.toString() }];
+    claims[WD_APPLE_PODCASTS_PODCAST_EPISODE_ID] = [
+      { value: episode.itunesId.toString() },
+    ];
   }
   if (episode.spotifyId) {
-    claims[WD_SPOTIFY_EPISODE_ID] = [
+    claims[WD_SPOTIFY_SHOW_EPISODE_ID] = [
       {
         value: episode.spotifyId,
       },

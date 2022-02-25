@@ -1,5 +1,5 @@
+import { getWikidataSparql } from "@entitree/wikidata-helper";
 import axios from "axios";
-import { sparql } from "../wikidata/getWikidataSparql";
 //@ts-ignore
 import wdk from "wikidata-sdk";
 
@@ -29,7 +29,7 @@ export async function searchGuest(search: string): Promise<null | string> {
         ?any wdt:P5030 ?item.
         SERVICE wikibase:label { bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en". }
       }`;
-  const data = await sparql(query);
+  const data = await getWikidataSparql(query);
   if (data.length === 0) {
     return null;
   }
