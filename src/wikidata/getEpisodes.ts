@@ -1,9 +1,20 @@
 import {
-  getWikidataSparql,
   WD_APPLE_PODCASTS_PODCAST_EPISODE_ID,
+  WD_DURATION,
+  WD_HAS_QUALITY,
+  WD_MAIN_SUBJECT,
+  WD_PODCAST_EPISODE,
   WD_PODCAST_LOGO_URL,
+  WD_PRODUCTION_CODE,
+  WD_PUBLICATION_DATE,
+  WD_RECORDED_AT_STUDIO_OR_VENUE,
+  WD_RECORDING_DATE,
+  WD_SEASON,
   WD_SPOTIFY_SHOW_EPISODE_ID,
+  WD_TALK_SHOW_GUEST,
+  WD_TITLE,
   WD_YOUTUBE_VIDEO_ID,
+  getWikidataSparql,
 } from "@entitree/wikidata-helper";
 
 //@ts-ignore
@@ -19,29 +30,29 @@ SELECT ?item ?itemLabel ?title ?url ?publicationDate ?duration ?hasQuality ?seas
 (GROUP_CONCAT(DISTINCT ?article;separator="|") AS ?wikipedia) 
 WHERE 
 {
-  ?item wdt:P31 wd:Q61855877.
+  ?item wdt:P31 wd:${WD_PODCAST_EPISODE}.
   ?item wdt:P179 wd:${podcast}.
-  OPTIONAL { ?item wdt:P1476 ?title .}
+  OPTIONAL { ?item wdt:${WD_TITLE} ?title .}
   #?item wdt:P953 ?url .
   OPTIONAL { ?item p:P953 ?urlStatement .
   ?urlStatement ps:P953 ?url .
   ?urlStatement pq:P2701 wd:Q42591 .} #only mp3
-  OPTIONAL { ?item wdt:P577 ?publicationDate . }
-  OPTIONAL { ?item wdt:P2047 ?duration . }
-  OPTIONAL { ?item wdt:P1552 ?hasQuality . }
-  OPTIONAL { ?item wdt:P483 ?recordedAt . }
-  OPTIONAL { ?item wdt:P10135 ?recordingDate . }
-  OPTIONAL { ?item wdt:P2364 ?productionCode . }
-  OPTIONAL { ?item wdt:P921 ?mainSubject . }
+  OPTIONAL { ?item wdt:${WD_PUBLICATION_DATE} ?publicationDate . }
+  OPTIONAL { ?item wdt:${WD_DURATION} ?duration . }
+  OPTIONAL { ?item wdt:${WD_HAS_QUALITY} ?hasQuality . }
+  OPTIONAL { ?item wdt:${WD_RECORDED_AT_STUDIO_OR_VENUE} ?recordedAt . }
+  OPTIONAL { ?item wdt:${WD_RECORDING_DATE} ?recordingDate . }
+  OPTIONAL { ?item wdt:${WD_PRODUCTION_CODE} ?productionCode . }
+  OPTIONAL { ?item wdt:${WD_MAIN_SUBJECT} ?mainSubject . }
   OPTIONAL { ?item wdt:${WD_YOUTUBE_VIDEO_ID} ?youtube . }
   OPTIONAL { ?item wdt:${WD_PODCAST_LOGO_URL} ?image . }
-  OPTIONAL { ?item p:P4908 ?seasonStatement . 
+  OPTIONAL { ?item p:${WD_SEASON} ?seasonStatement . 
              ?seasonStatement ps:P4908 ?season.
              ?seasonStatement pq:P1545 ?episodeNumber.
              ?season p:P179 ?seriesStatement . 
              ?seriesStatement pq:P1545 ?seasonNumber.
             }
-  OPTIONAL { ?item wdt:P5030 ?guest.  
+  OPTIONAL { ?item wdt:${WD_TALK_SHOW_GUEST} ?guest.  
     OPTIONAL {    
       ?article schema:about ?guest .
       ?article schema:isPartOf <https://en.wikipedia.org/>.
