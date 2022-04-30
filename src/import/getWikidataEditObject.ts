@@ -26,7 +26,7 @@ import {
   WD_STATED_IN_REFERENCE_AS,
   WD_TALK_SHOW_GUEST,
   WD_TITLE,
-} from "@entitree/wikidata-helper";
+} from "@entitree/helper";
 import {
   extractGuests,
   extractProductionCode,
@@ -36,9 +36,10 @@ import {
 import { generalConfig } from "./wikidataConfig";
 import { searchGuest } from "./searchGuests";
 
-const wbEdit = require("wikibase-edit")(generalConfig);
-
-export async function createItem(episode: EpisodeExtended, podcast: d) {
+export async function getWikidataEditObject(
+  episode: EpisodeExtended,
+  podcast: d
+) {
   const language = "en";
   let wikidataLabel = episode.title;
   if (podcast?.custom?.prefix) {
@@ -194,32 +195,40 @@ export async function createItem(episode: EpisodeExtended, podcast: d) {
   // return { labels, guests, claims, des: episode.description };
 
   console.log(claims);
-  if (podcast.write) {
-    if (episode.wikidataId) {
-      wbEdit.entity.edit({
-        // Required
-        id: episode.wikidataId,
-        reconciliation: {
-          mode: "skip-on-any-value",
-        },
-        // labels: [],
-        descriptions,
-        aliases,
-        claims,
-      });
-      console.log("edited item id");
-    } else {
-      const { entity } = await wbEdit.entity.create({
-        type: "item",
-        labels,
-        descriptions,
-        aliases,
-        claims,
-        sitelinks: [],
-      });
-      console.log("created item id", entity.id);
-    }
-  }
+  return {
+    type: "item",
+    labels,
+    descriptions,
+    aliases,
+    claims,
+    sitelinks: [],
+  };
+  // if (podcast.write) {
+  //   if (episode.wikidataId) {
+  //     wbEdit.entity.edit({
+  //       // Required
+  //       id: episode.wikidataId,
+  //       reconciliation: {
+  //         mode: "skip-on-any-value",
+  //       },
+  //       // labels: [],
+  //       descriptions,
+  //       aliases,
+  //       claims,
+  //     });
+  //     console.log("edited item id");
+  //   } else {
+  //     const { entity } = await wbEdit.entity.create({
+  //       type: "item",
+  //       labels,
+  //       descriptions,
+  //       aliases,
+  //       claims,
+  //       sitelinks: [],
+  //     });
+  //     console.log("created item id", entity.id);
+  //   }
+  // }
 
-  return { labels, guests, claims, des: episode.description };
+  // return { labels, guests, claims, des: episode.description };
 }

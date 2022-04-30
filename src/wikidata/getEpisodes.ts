@@ -15,7 +15,7 @@ import {
   WD_TITLE,
   WD_YOUTUBE_VIDEO_ID,
   getWikidataSparql,
-} from "@entitree/wikidata-helper";
+} from "@entitree/helper";
 
 //@ts-ignore
 import wdk from "wikidata-sdk";

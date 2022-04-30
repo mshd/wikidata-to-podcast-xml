@@ -1,13 +1,15 @@
+import {
+  getItunesShowEpisodes,
+  getSpotifyShowEpisodes,
+} from "@entitree/helper";
 import getPodcastFromFeed, { Episode, Podcast } from "podparse";
 
 import { DateTime } from "luxon";
 import axios from "axios";
-import { createItem } from "./wikidataCreate";
+import fs from "fs";
+import { getWikidataEditObject } from "./getWikidataEditObject";
 import { latestEpisode } from "../wikidata/getEpisodes";
-import {
-  getItunesShowEpisodes,
-  getSpotifyShowEpisodes,
-} from "@entitree/wikidata-helper";
+import path from "path";
 
 export type d = {
   id: string;
@@ -19,7 +21,7 @@ export type d = {
 };
 
 //https://developer.spotify.com/console/post-playlists/
-const token = process.env.SPOTIFY_TOKEN;
+const token = process.env.SPOTIFY_TOKEN as string;
 
 export interface EpisodeExtended extends Episode {
   spotifyId?: string;
@@ -46,21 +48,21 @@ export async function readFeed(input: d) {
 
   // let latestDate = DateTime.fromISO("2021-12-30");
   let episodes = res.episodes as EpisodeExtended[];
-  // episodes = await mergeWithApple(episodes, input.custom.itunesShowId);
-  // try {
-  //   episodes = await mergeWithSpotify(
-  //     episodes,
-  //     input.custom.spotifyShowId,
-  //     latestDate,
-  //     input.spotify_token ? input.spotify_token : token
-  //   );
-  // } catch (e) {
-  //   throw new Error(
-  //     "Could not get spotify episodes, please set access token using &spotify_token=xxx, please get a token here https://developer.spotify.com/console/post-playlists/"
-  //   );
-  // }
+  episodes = await mergeWithApple(episodes, input.custom.itunesShowId);
+  try {
+    episodes = await mergeWithSpotify(
+      episodes,
+      input.custom.spotifyShowId,
+      latestDate,
+      input.spotify_token ? (input.spotify_token as string) : token
+    );
+  } catch (e) {
+    throw new Error(
+      "Could not get spotify episodes, please set access token using &spotify_token=xxx, please get a token here https://developer.spotify.com/console/post-playlists/"
+    );
+  }
   // return latest.data;
-  // episodes = await mergeWithWikidata(episodes, latest.data);
+  episodes = await mergeWithWikidata(episodes, latest.data);
   let parsedEpisodes: any[] = [];
 
   //only create new episodes
@@ -77,11 +79,17 @@ export async function readFeed(input: d) {
   for (let i = 0; i < length; i++) {
     let episode = episodes[i];
     console.log(episode.title);
-    let created = await createItem(episode, input);
+    let newItemObject = await getWikidataEditObject(episode, input);
     // await new Promise((resolve) => setTimeout(resolve, 100000));
-    parsedEpisodes.push(created);
+    parsedEpisodes.push(newItemObject);
   }
-
+  fs.writeFileSync(
+    path.resolve(
+      __dirname,
+      "../../../../../public/wikidata/create" + input.id + ".json"
+    ),
+    JSON.stringify(parsedEpisodes)
+  );
   return parsedEpisodes;
 }
 

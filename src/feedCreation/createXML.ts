@@ -1,16 +1,16 @@
 import { DESCRIPTIONS, DESCRIPTIONS_DEFAULT } from "../podcastDescriptions";
+import {
+  WD_EXPLICIT_EPISODE,
+  WD_PODCAST,
+  getSimplifiedWikidataEntities,
+  getWikipediaDescription,
+} from "@entitree/helper";
 import path, { dirname } from "path";
 
 import { Podcast } from "podcast";
 import fs from "fs";
 import { getEpisodesById } from "../wikidata/getEpisodes";
 import { getPodcastInfo } from "../wikidata/getPodcastInfo";
-import {
-  getSimplifiedWikidataEntities,
-  getWikipediaDescription,
-  WD_EXPLICIT_EPISODE,
-  WD_PODCAST,
-} from "@entitree/wikidata-helper";
 
 export async function createXML(
   podcastId: string,

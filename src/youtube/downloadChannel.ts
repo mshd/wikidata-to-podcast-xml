@@ -1,5 +1,5 @@
-import { getYoutubePlaylistVideoIds } from "@entitree/wikidata-helper";
 import { downloadVideos } from "./downloadMp3";
+import { getYoutubePlaylistVideoIds } from "@entitree/helper";
 
 export async function runChannelByPlaylist(playlist: string) {
   const videos = await getYoutubePlaylistVideoIds(playlist, "key???"); // { ids: ["vRKULRro548"] };

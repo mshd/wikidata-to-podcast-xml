@@ -1,4 +1,4 @@
-import { WD_RECORDED_AT_STUDIO_OR_VENUE } from "@entitree/wikidata-helper";
+import { WD_RECORDED_AT_STUDIO_OR_VENUE } from "@entitree/helper";
 
 type DESCRIPTION_TYPE = {
   id?: string;
@@ -66,7 +66,7 @@ export const DESCRIPTIONS: DESCRIPTION_TYPE[] = [
     title: "The Jordan B. Peterson Podcast",
     guestMatch: `\\|(.[^\\|]*)`,
     guestMatchIndex: 1,
-    seasons: { 4: "Q109265421" },
+    // seasons: { 4: "Q109265421" },
     description: `Join intellectual phenomenon Dr. Jordan Peterson and his daughter Mikhaila for enlightening discourse that will change the way you think. This podcast breaks down the dichotomy of life through interviews and lectures that explain how individuals and culture are shaped by values, music, religion, and beyond. It will give you a new perspective and a modern understanding of your creativity, competence, and personality.`,
   },
   {

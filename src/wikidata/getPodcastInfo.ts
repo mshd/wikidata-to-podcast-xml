@@ -1,8 +1,8 @@
 import {
-  getWikidataSparql,
   WD_PODCAST_LOGO_URL,
   WD_WEB_FEED_URL,
-} from "@entitree/wikidata-helper";
+  getWikidataSparql,
+} from "@entitree/helper";
 
 export async function getPodcastInfo(podcast: string) {
   let data = `SELECT ?item ?itemLabel ?language ?languageLabel ?languageCode ?genre ?genreLabel ?producer ?producerLabel  ?presenter ?presenterLabel ?itunesGenre ?itunesGenreId ?logo
